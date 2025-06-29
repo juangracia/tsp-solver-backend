@@ -12,10 +12,10 @@
     </parent>
 
     <groupId>com.tsp</groupId>
-    <artifactId>tsp-solver</artifactId>
+    <artifactId>sf3-tps-solver</artifactId>
     <version>1.0.0</version>
-    <name>TSP Solver</name>
-    <description>Travelling Salesman Problem Solver with Multiple Algorithms</description>
+    <name>SF3 TPS Solver</name>
+    <description>SF3 TPS Solver - Travelling Salesman Problem Solver with Multiple Algorithms</description>
 
     <properties>
         <java.version>17</java.version>
