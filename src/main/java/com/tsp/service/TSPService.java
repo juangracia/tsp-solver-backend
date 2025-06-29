@@ -42,7 +42,9 @@ public class TSPService {
         
         for (int i = 0; i < addresses.size(); i++) {
             String address = addresses.get(i);
-            Point point = new Point((double) i, (double) i, address, null);
+            // Create coordinates with the same values as x/y for demonstration
+            Coordinates coordinates = new Coordinates((double) i, (double) i);
+            Point point = new Point((double) i, (double) i, address, coordinates);
             points.add(point);
             
             addressInfos.add(new TSPSolution.AddressInfo(address, null, null));
@@ -76,6 +78,9 @@ public class TSPService {
             solution.setExecutionTimeMs(result.getExecutionTimeMs());
             solution.setStatus(SolutionStatus.SOLVED);
             
+            // Fix route coordinates before saving
+            fixRouteCoordinates(solution);
+            
             if (Boolean.TRUE.equals(useRealDistances) && Boolean.TRUE.equals(solution.getRealWorldDemo())) {
                 solution.setRealWorldDistance(String.format("%.1f km", result.getTotalDistance()));
                 solution.setEstimatedDriveTime(estimateDriveTime(result.getTotalDistance()));
@@ -91,11 +96,51 @@ public class TSPService {
     }
     
     public Optional<TSPSolution> getSolution(String id) {
-        return repository.findById(id);
+        Optional<TSPSolution> solution = repository.findById(id);
+        solution.ifPresent(this::fixRouteCoordinates);
+        return solution;
     }
     
     public List<TSPSolution> getAllSolutions() {
-        return repository.findAll();
+        List<TSPSolution> solutions = repository.findAll();
+        solutions.forEach(this::fixRouteCoordinates);
+        return solutions;
+    }
+    
+    /**
+     * Fixes the route coordinates after retrieving from the database.
+     * This is needed because the coordinates are not properly persisted in the database.
+     * 
+     * @param solution The solution to fix
+     */
+    private void fixRouteCoordinates(TSPSolution solution) {
+        if (solution.getRoute() == null || solution.getOriginalPoints() == null) {
+            return;
+        }
+        
+        // Map of original points by order
+        for (int i = 0; i < solution.getRoute().size(); i++) {
+            RoutePoint routePoint = solution.getRoute().get(i);
+            int order = routePoint.getOrder();
+            
+            // For order 0, use the first original point
+            if (order == 0 && !solution.getOriginalPoints().isEmpty()) {
+                Point originalPoint = solution.getOriginalPoints().get(0);
+                routePoint.setX(originalPoint.getX());
+                routePoint.setY(originalPoint.getY());
+                routePoint.setCoordinates(originalPoint.getCoordinates());
+                continue;
+            }
+            
+            // For other orders, find the corresponding original point
+            if (order > 0 && order <= solution.getOriginalPoints().size()) {
+                // The route order is 1-based for points after the first, but the list is 0-based
+                Point originalPoint = solution.getOriginalPoints().get(order - 1);
+                routePoint.setX(originalPoint.getX());
+                routePoint.setY(originalPoint.getY());
+                routePoint.setCoordinates(originalPoint.getCoordinates());
+            }
+        }
     }
     
     public void deleteSolution(String id) {

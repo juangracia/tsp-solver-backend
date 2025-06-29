@@ -67,6 +67,11 @@ public class Point {
 
     public void setCoordinates(Coordinates coordinates) {
         this.coordinates = coordinates;
+        // Synchronize x/y values with coordinates when they're set
+        if (coordinates != null) {
+            this.x = coordinates.getLng();
+            this.y = coordinates.getLat();
+        }
     }
 
     @Override

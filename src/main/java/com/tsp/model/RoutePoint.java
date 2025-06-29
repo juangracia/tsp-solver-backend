@@ -18,6 +18,11 @@ public class RoutePoint extends Point {
     public RoutePoint(Point point, Integer order) {
         super(point.getX(), point.getY(), point.getAddress(), point.getCoordinates());
         this.order = order;
+        
+        // Ensure coordinates are properly set
+        if (point.getCoordinates() != null) {
+            this.setCoordinates(point.getCoordinates());
+        }
     }
 
     public RoutePoint(Double x, Double y, Integer order) {

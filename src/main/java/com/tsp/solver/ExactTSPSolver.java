@@ -2,6 +2,8 @@ package com.tsp.solver;
 
 import com.tsp.model.Point;
 import com.tsp.model.RoutePoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -22,6 +24,8 @@ import java.util.*;
  */
 @Component
 public class ExactTSPSolver implements TSPSolver {
+    
+    private static final Logger logger = LoggerFactory.getLogger(ExactTSPSolver.class);
     
     /**
      * Solves the TSP problem using exact algorithms.
@@ -333,8 +337,25 @@ public class ExactTSPSolver implements TSPSolver {
         // Create a new list to hold the complete route
         List<RoutePoint> route = new ArrayList<>();
         
+        // Log original points for debugging
+        logger.debug("Original points with coordinates:");
+        for (int i = 0; i < points.size(); i++) {
+            Point p = points.get(i);
+            logger.debug("Point {}: x={}, y={}, coordinates={}", 
+                i, p.getX(), p.getY(), 
+                (p.getCoordinates() != null ? 
+                    "lat=" + p.getCoordinates().getLat() + ", lng=" + p.getCoordinates().getLng() : "null"));
+        }
+        
         // Step 1: Add the starting point (city 0) as the first stop
-        route.add(new RoutePoint(points.get(0), 0));
+        Point startPoint = points.get(0);
+        RoutePoint startRoutePoint = new RoutePoint(startPoint, 0);
+        route.add(startRoutePoint);
+        logger.debug("Added start point to route: x={}, y={}, coordinates={}, order={}", 
+            startRoutePoint.getX(), startRoutePoint.getY(),
+            (startRoutePoint.getCoordinates() != null ? 
+                "lat=" + startRoutePoint.getCoordinates().getLat() + ", lng=" + startRoutePoint.getCoordinates().getLng() : "null"),
+            startRoutePoint.getOrder());
         
         // Step 2: Add each point in the best route with its position in the tour
         for (int i = 0; i < bestRoute.size(); i++) {
@@ -343,7 +364,14 @@ public class ExactTSPSolver implements TSPSolver {
             Point point = points.get(cityIndex);
             
             // Create a RoutePoint with the point and its position (i+1 because city 0 is position 0)
-            route.add(new RoutePoint(point, i + 1));
+            RoutePoint routePoint = new RoutePoint(point, i + 1);
+            route.add(routePoint);
+            
+            logger.debug("Added route point {}: x={}, y={}, coordinates={}, order={}", 
+                i+1, routePoint.getX(), routePoint.getY(),
+                (routePoint.getCoordinates() != null ? 
+                    "lat=" + routePoint.getCoordinates().getLat() + ", lng=" + routePoint.getCoordinates().getLng() : "null"),
+                routePoint.getOrder());
         }
         
         // The route now contains a complete tour: city 0 -> bestRoute[0] -> bestRoute[1] -> ... -> city 0
