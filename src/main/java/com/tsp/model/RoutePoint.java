@@ -1,13 +1,17 @@
 package com.tsp.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.tsp.config.RoutePointSerializer;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 @Embeddable
-@JsonSerialize(using = RoutePointSerializer.class)
 public class RoutePoint extends Point {
+    
+    @Column(name = "x_coordinate")
+    private Double x;
+    
+    @Column(name = "y_coordinate") 
+    private Double y;
+    
     @Column(name = "route_order")
     private Integer order;
 
@@ -17,6 +21,8 @@ public class RoutePoint extends Point {
 
     public RoutePoint(Point point, Integer order) {
         super(point.getX(), point.getY(), point.getAddress(), point.getCoordinates());
+        this.x = point.getX();
+        this.y = point.getY();
         this.order = order;
         
         // Ensure coordinates are properly set
@@ -27,6 +33,8 @@ public class RoutePoint extends Point {
 
     public RoutePoint(Double x, Double y, Integer order) {
         super(x, y);
+        this.x = x;
+        this.y = y;
         this.order = order;
     }
 
@@ -36,6 +44,28 @@ public class RoutePoint extends Point {
 
     public void setOrder(Integer order) {
         this.order = order;
+    }
+    
+    @Override
+    public Double getX() {
+        return x;
+    }
+    
+    @Override
+    public void setX(Double x) {
+        this.x = x;
+        super.setX(x);
+    }
+    
+    @Override
+    public Double getY() {
+        return y;
+    }
+    
+    @Override
+    public void setY(Double y) {
+        this.y = y;
+        super.setY(y);
     }
 
     @Override

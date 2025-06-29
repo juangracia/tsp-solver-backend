@@ -79,7 +79,7 @@ public class TSPService {
             solution.setStatus(SolutionStatus.SOLVED);
             
             // Fix route coordinates before saving
-            fixRouteCoordinates(solution);
+            // fixRouteCoordinates(solution);  // Temporarily disabled to test
             
             if (Boolean.TRUE.equals(useRealDistances) && Boolean.TRUE.equals(solution.getRealWorldDemo())) {
                 solution.setRealWorldDistance(String.format("%.1f km", result.getTotalDistance()));
@@ -97,13 +97,13 @@ public class TSPService {
     
     public Optional<TSPSolution> getSolution(String id) {
         Optional<TSPSolution> solution = repository.findById(id);
-        solution.ifPresent(this::fixRouteCoordinates);
+        // solution.ifPresent(this::fixRouteCoordinates);  // Temporarily disabled to test
         return solution;
     }
     
     public List<TSPSolution> getAllSolutions() {
         List<TSPSolution> solutions = repository.findAll();
-        solutions.forEach(this::fixRouteCoordinates);
+        // solutions.forEach(this::fixRouteCoordinates);  // Temporarily disabled to test
         return solutions;
     }
     
