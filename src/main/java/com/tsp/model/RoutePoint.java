@@ -1,9 +1,11 @@
 package com.tsp.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class RoutePoint extends Point {
+    @Column(name = "route_order")
     private Integer order;
 
     public RoutePoint() {

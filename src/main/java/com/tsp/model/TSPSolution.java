@@ -20,12 +20,12 @@ public class TSPSolution {
     @Column(name = "file_name")
     private String fileName;
     
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "original_points", columnDefinition = "json")
+    @ElementCollection
+    @CollectionTable(name = "tsp_solution_points")
     private List<Point> originalPoints;
     
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "route", columnDefinition = "json")
+    @ElementCollection
+    @CollectionTable(name = "tsp_solution_route")
     private List<RoutePoint> route;
     
     @Column(name = "total_distance")
@@ -59,8 +59,8 @@ public class TSPSolution {
     @Column(name = "map_url")
     private String mapUrl;
     
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "addresses", columnDefinition = "json")
+    @ElementCollection
+    @CollectionTable(name = "tsp_solution_addresses")
     private List<AddressInfo> addresses;
 
     public TSPSolution() {
@@ -198,10 +198,14 @@ public class TSPSolution {
         this.addresses = addresses;
     }
 
+    @Embeddable
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class AddressInfo {
         private String address;
+        
+        @Embedded
         private Coordinates coordinates;
+        
         private String placeId;
 
         public AddressInfo() {}
