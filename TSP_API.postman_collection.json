@@ -1,0 +1,634 @@
+{
+	"info": {
+		"_postman_id": "tsp-solver-api-collection",
+		"name": "TSP Solver API",
+		"description": "Complete API collection for the Travelling Salesman Problem Solver backend. Tests all endpoints including file upload, address upload, solving algorithms, and retrieving solutions.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "tsp-api-v1"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/actuator/health",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"actuator",
+						"health"
+					]
+				},
+				"description": "Check if the Spring Boot application is running and healthy"
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Coordinate File (Small - 5 points)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Response has id', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson).to.have.property('id');",
+							"    pm.environment.set('smallFileId', responseJson.id);",
+							"});",
+							"",
+							"pm.test('Point count is 5', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.pointCount).to.eql(5);",
+							"});",
+							"",
+							"pm.test('Status is UPLOADED', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.status).to.eql('UPLOADED');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": [],
+							"description": "Upload small_test.txt with 5 coordinate points"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/tsp/upload",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"tsp",
+						"upload"
+					]
+				},
+				"description": "Upload a coordinate file with 5 points. Expected to use ExactTSPSolver (Brute Force or Dynamic Programming).\n\nFile content (small_test.txt):\n```\n0,0\n3,4\n6,0\n3,-4\n-3,2\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Coordinate File (Medium - 15 points)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Response has id', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson).to.have.property('id');",
+							"    pm.environment.set('mediumFileId', responseJson.id);",
+							"});",
+							"",
+							"pm.test('Point count is 15', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.pointCount).to.eql(15);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": [],
+							"description": "Upload medium_test.txt with 15 coordinate points"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/tsp/upload",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"tsp",
+						"upload"
+					]
+				},
+				"description": "Upload a coordinate file with 15 points. Expected to use HeuristicTSPSolver (Nearest Neighbor + 2-opt).\n\nFile content (medium_test.txt):\n```\n0,0\n10,10\n20,5\n15,15\n5,20\n25,25\n30,10\n12,8\n18,22\n7,15\n22,18\n28,5\n9,25\n16,3\n4,12\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Real-World Addresses",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Response has id', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson).to.have.property('id');",
+							"    pm.environment.set('addressesId', responseJson.id);",
+							"});",
+							"",
+							"pm.test('Status is GEOCODED', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.status).to.eql('GEOCODED');",
+							"});",
+							"",
+							"pm.test('Real world demo flag is true', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.realWorldDemo).to.eql(true);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"addresses\": [\n    \"1600 Amphitheatre Parkway, Mountain View, CA\",\n    \"1 Hacker Way, Menlo Park, CA\",\n    \"1 Apple Park Way, Cupertino, CA\",\n    \"350 Mission St, San Francisco, CA\",\n    \"410 Terry Ave N, Seattle, WA\"\n  ],\n  \"mode\": \"DEMO\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/tsp/upload-addresses",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"tsp",
+						"upload-addresses"
+					]
+				},
+				"description": "Upload real-world addresses for the Google Maps integration demo. This tests the address geocoding functionality."
+			},
+			"response": []
+		},
+		{
+			"name": "Solve Small TSP (Auto Algorithm)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Status is SOLVED', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.status).to.eql('SOLVED');",
+							"});",
+							"",
+							"pm.test('Algorithm is exact (BRUTE_FORCE or DYNAMIC_PROGRAMMING)', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.algorithm).to.match(/BRUTE_FORCE|DYNAMIC_PROGRAMMING/);",
+							"});",
+							"",
+							"pm.test('Has route with correct number of points', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.route).to.have.lengthOf(5);",
+							"});",
+							"",
+							"pm.test('Total distance is reasonable', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.totalDistance).to.be.above(0);",
+							"});",
+							"",
+							"pm.test('Execution time is fast (< 1000ms)', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.executionTimeMs).to.be.below(1000);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/tsp/{{smallFileId}}/solve",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"tsp",
+						"{{smallFileId}}",
+						"solve"
+					]
+				},
+				"description": "Solve the small TSP problem (5 points) using automatic algorithm selection. Should use ExactTSPSolver for optimal results."
+			},
+			"response": []
+		},
+		{
+			"name": "Solve Medium TSP (Auto Algorithm)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Algorithm is heuristic (NEAREST_NEIGHBOR_2OPT)', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.algorithm).to.eql('NEAREST_NEIGHBOR_2OPT');",
+							"});",
+							"",
+							"pm.test('Has route with correct number of points', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.route).to.have.lengthOf(15);",
+							"});",
+							"",
+							"pm.test('Execution time is reasonable (< 5000ms)', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.executionTimeMs).to.be.below(5000);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/tsp/{{mediumFileId}}/solve",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"tsp",
+						"{{mediumFileId}}",
+						"solve"
+					]
+				},
+				"description": "Solve the medium TSP problem (15 points) using automatic algorithm selection. Should use HeuristicTSPSolver (Nearest Neighbor + 2-opt)."
+			},
+			"response": []
+		},
+		{
+			"name": "Solve TSP with Forced Algorithm (Heuristic)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Algorithm matches requested', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.algorithm).to.eql('NEAREST_NEIGHBOR_2OPT');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/tsp/{{smallFileId}}/solve?algorithm=heuristic&maxTime=30",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"tsp",
+						"{{smallFileId}}",
+						"solve"
+					],
+					"query": [
+						{
+							"key": "algorithm",
+							"value": "heuristic",
+							"description": "Force use of heuristic algorithm"
+						},
+						{
+							"key": "maxTime",
+							"value": "30",
+							"description": "Maximum solving time in seconds"
+						}
+					]
+				},
+				"description": "Solve TSP with manually specified algorithm (override automatic selection). This forces the use of heuristic solver even for small problems."
+			},
+			"response": []
+		},
+		{
+			"name": "Solve Addresses TSP (Real-World)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Real world demo flag is maintained', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.realWorldDemo).to.eql(true);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/tsp/{{addressesId}}/solve?useRealDistances=true",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"tsp",
+						"{{addressesId}}",
+						"solve"
+					],
+					"query": [
+						{
+							"key": "useRealDistances",
+							"value": "true",
+							"description": "Use real driving distances from Google Maps"
+						}
+					]
+				},
+				"description": "Solve the real-world addresses TSP using Google Maps integration for actual driving distances."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Solution by ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Response has solution data', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson).to.have.property('id');",
+							"    pm.expect(responseJson).to.have.property('status');",
+							"    pm.expect(responseJson).to.have.property('pointCount');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/tsp/{{smallFileId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"tsp",
+						"{{smallFileId}}"
+					]
+				},
+				"description": "Retrieve a specific TSP solution by its ID. Shows complete solution details including route, distance, and algorithm used."
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Solutions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Response has solutions array', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson).to.have.property('solutions');",
+							"    pm.expect(responseJson.solutions).to.be.an('array');",
+							"});",
+							"",
+							"pm.test('Solutions array is not empty', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.solutions.length).to.be.above(0);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/tsp",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"tsp"
+					]
+				},
+				"description": "Get all TSP solutions stored in the system. Useful for listing and managing multiple problems and their solutions."
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Solution",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 204', function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/tsp/{{mediumFileId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"tsp",
+						"{{mediumFileId}}"
+					]
+				},
+				"description": "Delete a specific TSP solution by ID. Useful for cleanup and managing storage."
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Invalid File (Error Test)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 400', function () {",
+							"    pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test('Error message is returned', function () {",
+							"    const responseText = pm.response.text();",
+							"    pm.expect(responseText).to.include('error').or.include('Invalid');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": [],
+							"description": "Upload an invalid file (not .txt or wrong format)"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/tsp/upload",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"tsp",
+						"upload"
+					]
+				},
+				"description": "Test error handling by uploading an invalid file. Should return 400 Bad Request with error message."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Non-existent Solution (404 Test)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 404', function () {",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/tsp/non-existent-id-12345",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"tsp",
+						"non-existent-id-12345"
+					]
+				},
+				"description": "Test 404 error handling by requesting a solution that doesn't exist."
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string",
+			"description": "Base URL for the TSP API server"
+		}
+	]
+}

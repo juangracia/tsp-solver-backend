@@ -1,0 +1,4 @@
+This is not a valid coordinate file
+It contains text instead of x,y coordinates
+1,2,3
+invalid,data
