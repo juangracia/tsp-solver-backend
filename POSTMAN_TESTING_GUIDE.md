@@ -19,7 +19,7 @@ The collection requires these test files in the `postman_test_files/` directory:
 
 ### 3. Start the Backend
 ```bash
-cd backend
+cd tsp-solver-backend
 mvn spring-boot:run
 ```
 

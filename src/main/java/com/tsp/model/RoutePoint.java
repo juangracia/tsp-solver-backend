@@ -1,9 +1,12 @@
 package com.tsp.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.tsp.config.RoutePointSerializer;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 @Embeddable
+@JsonSerialize(using = RoutePointSerializer.class)
 public class RoutePoint extends Point {
     @Column(name = "route_order")
     private Integer order;

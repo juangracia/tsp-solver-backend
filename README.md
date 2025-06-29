@@ -25,7 +25,7 @@ A production-ready Spring Boot REST API backend that solves the Travelling Sales
 
 1. Navigate to the backend directory:
 ```bash
-cd /Users/juangracia/SFR3/dev/tsp/backend
+cd /Users/juangracia/SFR3/dev/tsp/tsp-solver-backend
 ```
 
 2. Start the application:
