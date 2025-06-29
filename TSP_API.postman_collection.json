@@ -2,9 +2,9 @@
 	"info": {
 		"_postman_id": "tsp-solver-api-collection",
 		"name": "TSP Solver API",
-		"description": "Complete API collection for the Travelling Salesman Problem Solver backend. Tests all endpoints including file upload, address upload, solving algorithms, and retrieving solutions.",
+		"description": "Complete API collection for the Travelling Salesman Problem Solver backend. Tests all endpoints including file upload, address upload, solving algorithms, and retrieving solutions. Uses organized test files from txt/ folder with algorithm-specific datasets.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "tsp-api-v1"
+		"_exporter_id": "tsp-api-v2"
 	},
 	"item": [
 		{
@@ -67,7 +67,7 @@
 							"key": "file",
 							"type": "file",
 							"src": [],
-							"description": "Upload small_test.txt with 5 coordinate points"
+							"description": "Upload exact_5_points.txt with 5 coordinate points for ExactTSPSolver"
 						}
 					]
 				},
@@ -82,7 +82,7 @@
 						"upload"
 					]
 				},
-				"description": "Upload a coordinate file with 5 points. Expected to use ExactTSPSolver (Brute Force or Dynamic Programming).\n\nFile content (small_test.txt):\n```\n0,0\n3,4\n6,0\n3,-4\n-3,2\n```"
+				"description": "Upload a coordinate file with 5 points. Expected to use ExactTSPSolver (Brute Force or Dynamic Programming).\n\nFile: txt/exact_5_points.txt\n```\n0.0,0.0\n1.0,3.0\n4.0,3.0\n6.0,1.0\n3.0,0.0\n```"
 			},
 			"response": []
 		},
@@ -122,7 +122,7 @@
 							"key": "file",
 							"type": "file",
 							"src": [],
-							"description": "Upload medium_test.txt with 15 coordinate points"
+							"description": "Upload heuristic_15_points.txt with 15 coordinate points for HeuristicTSPSolver"
 						}
 					]
 				},
@@ -137,7 +137,67 @@
 						"upload"
 					]
 				},
-				"description": "Upload a coordinate file with 15 points. Expected to use HeuristicTSPSolver (Nearest Neighbor + 2-opt).\n\nFile content (medium_test.txt):\n```\n0,0\n10,10\n20,5\n15,15\n5,20\n25,25\n30,10\n12,8\n18,22\n7,15\n22,18\n28,5\n9,25\n16,3\n4,12\n```"
+				"description": "Upload a coordinate file with 15 points. Expected to use HeuristicTSPSolver (Nearest Neighbor + 2-opt).\n\nFile: txt/heuristic_15_points.txt\n```\n0.0,0.0\n4.0,8.0\n9.0,12.0\n15.0,10.0\n18.0,5.0\n[...additional points]\n```"
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Large File (30 points - Metaheuristic)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Response has id', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson).to.have.property('id');",
+							"    pm.environment.set('largeFileId', responseJson.id);",
+							"});",
+							"",
+							"pm.test('Point count is 30', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.pointCount).to.eql(30);",
+							"});",
+							"",
+							"pm.test('Status is UPLOADED', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.status).to.eql('UPLOADED');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": [],
+							"description": "Upload metaheuristic_30_points.txt with 30 coordinate points for MetaheuristicTSPSolver"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/tsp/upload",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"tsp",
+						"upload"
+					]
+				},
+				"description": "Upload a coordinate file with 30 points. Expected to use MetaheuristicTSPSolver (Simulated Annealing).\n\nFile: txt/metaheuristic_30_points.txt\n```\n0.0,0.0\n7.0,14.0\n18.0,22.0\n[...additional points]\n```"
 			},
 			"response": []
 		},
@@ -304,6 +364,55 @@
 					]
 				},
 				"description": "Solve the medium TSP problem (15 points) using automatic algorithm selection. Should use HeuristicTSPSolver (Nearest Neighbor + 2-opt)."
+			},
+			"response": []
+		},
+		{
+			"name": "Solve Large TSP (Auto Algorithm - Metaheuristic)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Algorithm is metaheuristic (SIMULATED_ANNEALING)', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.algorithm).to.eql('SIMULATED_ANNEALING');",
+							"});",
+							"",
+							"pm.test('Has route with correct number of points', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.route).to.have.lengthOf(30);",
+							"});",
+							"",
+							"pm.test('Execution time is reasonable (< 30000ms)', function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.executionTimeMs).to.be.below(30000);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/tsp/{{largeFileId}}/solve",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"tsp",
+						"{{largeFileId}}",
+						"solve"
+					]
+				},
+				"description": "Solve the large TSP problem (30 points) using automatic algorithm selection. Should use MetaheuristicTSPSolver (Simulated Annealing)."
 			},
 			"response": []
 		},

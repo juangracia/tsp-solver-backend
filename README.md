@@ -86,11 +86,39 @@ DELETE /api/tsp/{id}
 
 Input files should contain coordinates in CSV format:
 ```
-0,0
-3,4
-6,0
-3,-4
--3,2
+0.0,0.0
+3.0,4.0
+6.0,0.0
+3.0,-4.0
+-3.0,2.0
+```
+
+### Test Files
+
+The project includes organized test files in the `txt/` directory:
+
+#### Algorithm-Specific Test Files
+- **`exact_*.txt`** - Small datasets (≤10 points) for ExactTSPSolver
+  - `exact_5_points.txt` - 5 coordinates for brute force testing
+  - `exact_8_points.txt` - 8 coordinates for dynamic programming
+  - `exact_10_points.txt` - 10 coordinates (boundary case)
+
+- **`heuristic_*.txt`** - Medium datasets (11-25 points) for HeuristicTSPSolver
+  - `heuristic_15_points.txt` - 15 coordinates for nearest neighbor + 2-opt
+  - `heuristic_20_points.txt` - 20 coordinates 
+  - `heuristic_25_points.txt` - 25 coordinates (boundary case)
+
+- **`metaheuristic_*.txt`** - Large datasets (26+ points) for MetaheuristicTSPSolver
+  - `metaheuristic_30_points.txt` - 30 coordinates for simulated annealing
+  - `metaheuristic_50_points.txt` - 50 coordinates
+  - `metaheuristic_100_points.txt` - 100 coordinates (stress test)
+
+#### Quick Test Commands
+```bash
+# Test each algorithm type
+curl -X POST -F "file=@txt/exact_5_points.txt" http://localhost:8080/api/tsp/upload
+curl -X POST -F "file=@txt/heuristic_15_points.txt" http://localhost:8080/api/tsp/upload  
+curl -X POST -F "file=@txt/metaheuristic_30_points.txt" http://localhost:8080/api/tsp/upload
 ```
 
 ### Testing
@@ -112,7 +140,7 @@ Input files should contain coordinates in CSV format:
 ```
 
 #### Postman Testing
-Import `TSP_API.postman_collection.json` and `TSP_API.postman_environment.json` for comprehensive API testing (13 test scenarios included).
+Import `TSP_API.postman_collection.json` and `TSP_API.postman_environment.json` for comprehensive API testing. The collection includes tests for all algorithm types using the organized test files from the `txt/` directory.
 
 ### Docker Deployment
 

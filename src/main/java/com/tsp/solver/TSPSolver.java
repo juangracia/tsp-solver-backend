@@ -28,6 +28,33 @@ public interface TSPSolver {
     TSPResult solve(List<Point> points);
     
     /**
+     * Utility method to calculate and set segment and accumulated distances for a route.
+     * This method modifies the RoutePoint objects in-place.
+     *
+     * @param route List of RoutePoints representing the complete route
+     */
+    static void calculateRouteDistances(List<RoutePoint> route) {
+        if (route == null || route.size() < 2) {
+            return;
+        }
+        
+        double accumulatedDistance = 0.0;
+        
+        for (int i = 0; i < route.size(); i++) {
+            RoutePoint currentPoint = route.get(i);
+            RoutePoint nextPoint = route.get((i + 1) % route.size()); // Wrap around to start
+            
+            // Calculate distance to next point
+            double segmentDistance = currentPoint.distanceTo(nextPoint);
+            accumulatedDistance += segmentDistance;
+            
+            // Set the distances
+            currentPoint.setSegmentDistance(segmentDistance);
+            currentPoint.setAccumulatedDistance(accumulatedDistance);
+        }
+    }
+    
+    /**
      * Container class for the result of a TSP solution.
      * <p>
      * This class encapsulates all the important information about the solution,

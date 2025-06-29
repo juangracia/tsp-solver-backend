@@ -14,6 +14,12 @@ public class RoutePoint extends Point {
     
     @Column(name = "route_order")
     private Integer order;
+    
+    @Column(name = "segment_distance")
+    private Double segmentDistance;
+    
+    @Column(name = "accumulated_distance")
+    private Double accumulatedDistance;
 
     public RoutePoint() {
         super();
@@ -46,6 +52,22 @@ public class RoutePoint extends Point {
         this.order = order;
     }
     
+    public Double getSegmentDistance() {
+        return segmentDistance;
+    }
+    
+    public void setSegmentDistance(Double segmentDistance) {
+        this.segmentDistance = segmentDistance;
+    }
+    
+    public Double getAccumulatedDistance() {
+        return accumulatedDistance;
+    }
+    
+    public void setAccumulatedDistance(Double accumulatedDistance) {
+        this.accumulatedDistance = accumulatedDistance;
+    }
+    
     @Override
     public Double getX() {
         return x;
@@ -70,6 +92,7 @@ public class RoutePoint extends Point {
 
     @Override
     public String toString() {
-        return String.format("RoutePoint(%.2f, %.2f, order=%d)", getX(), getY(), order);
+        return String.format("RoutePoint(%.2f, %.2f, order=%d, segmentDist=%.2f, accumulatedDist=%.2f)", 
+                           getX(), getY(), order, segmentDistance, accumulatedDistance);
     }
 }

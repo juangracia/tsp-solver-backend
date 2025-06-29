@@ -70,6 +70,7 @@ public class ExactTSPSolver implements TSPSolver {
             for (int i = 0; i < n; i++) {
                 route.add(new RoutePoint(points.get(i), i));
             }
+            TSPSolver.calculateRouteDistances(route);
             return new TSPResult(route, 0.0, System.currentTimeMillis() - startTime, "BRUTE_FORCE");
         }
         
@@ -100,6 +101,7 @@ public class ExactTSPSolver implements TSPSolver {
         
         // Step 4: Convert the best sequence of indices to a complete route
         List<RoutePoint> route = buildRoute(points, bestRoute);
+        TSPSolver.calculateRouteDistances(route);
         long executionTime = System.currentTimeMillis() - startTime;
         
         return new TSPResult(route, minDistance, executionTime, "BRUTE_FORCE");
@@ -126,6 +128,7 @@ public class ExactTSPSolver implements TSPSolver {
             for (int i = 0; i < n; i++) {
                 route.add(new RoutePoint(points.get(i), i));
             }
+            TSPSolver.calculateRouteDistances(route);
             return new TSPResult(route, 0.0, System.currentTimeMillis() - startTime, "DYNAMIC_PROGRAMMING");
         }
         
@@ -154,7 +157,10 @@ public class ExactTSPSolver implements TSPSolver {
             route.add(new RoutePoint(point, i));
         }
         
-        // Step 6: Measure execution time and return the result
+        // Step 6: Calculate distances for the route
+        TSPSolver.calculateRouteDistances(route);
+        
+        // Step 7: Measure execution time and return the result
         long executionTime = System.currentTimeMillis() - startTime;
         return new TSPResult(route, minCost, executionTime, "DYNAMIC_PROGRAMMING");
     }

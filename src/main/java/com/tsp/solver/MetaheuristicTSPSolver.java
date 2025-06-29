@@ -76,6 +76,7 @@ public class MetaheuristicTSPSolver implements TSPSolver {
             for (int i = 0; i < points.size(); i++) {
                 route.add(new RoutePoint(points.get(i), i));
             }
+            TSPSolver.calculateRouteDistances(route);
             return new TSPResult(route, 0.0, System.currentTimeMillis() - startTime, "SIMULATED_ANNEALING");
         }
         
@@ -88,10 +89,13 @@ public class MetaheuristicTSPSolver implements TSPSolver {
         // Step 3: Calculate the total distance of the final tour
         double totalDistance = calculateTourDistance(points, bestTour);
         
-        // Step 4: Measure total execution time
+        // Step 4: Calculate distances for the route
+        TSPSolver.calculateRouteDistances(route);
+        
+        // Step 5: Measure total execution time
         long executionTime = System.currentTimeMillis() - startTime;
         
-        // Step 5: Return the TSP solution with route, distance, time, and algorithm name
+        // Step 6: Return the TSP solution with route, distance, time, and algorithm name
         return new TSPResult(route, totalDistance, executionTime, "SIMULATED_ANNEALING");
     }
     

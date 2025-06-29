@@ -46,6 +46,7 @@ public class HeuristicTSPSolver implements TSPSolver {
             for (int i = 0; i < points.size(); i++) {
                 route.add(new RoutePoint(points.get(i), i));
             }
+            TSPSolver.calculateRouteDistances(route);
             return new TSPResult(route, 0.0, System.currentTimeMillis() - startTime, "NEAREST_NEIGHBOR_2OPT");
         }
         
@@ -65,10 +66,13 @@ public class HeuristicTSPSolver implements TSPSolver {
         // which already handles the complete tour distance
         totalDistance = calculateTourDistance(points, tour);
         
-        // Step 5: Calculate execution time
+        // Step 5: Calculate distances for the route
+        TSPSolver.calculateRouteDistances(route);
+        
+        // Step 6: Calculate execution time
         long executionTime = System.currentTimeMillis() - startTime;
         
-        // Step 6: Return the final solution
+        // Step 7: Return the final solution
         return new TSPResult(route, totalDistance, executionTime, "NEAREST_NEIGHBOR_2OPT");
     }
     

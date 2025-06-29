@@ -64,7 +64,8 @@ class TSPServiceTest {
             "Address 3"
         );
         
-        when(repository.save(any(TSPSolution.class))).thenReturn(testSolution);
+        // Mock repository.save to return the actual solution passed to it
+        when(repository.save(any(TSPSolution.class))).thenAnswer(invocation -> invocation.getArgument(0));
         
         TSPSolution result = tspService.uploadAddresses(addresses, "DEMO");
         
