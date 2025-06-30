@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "tsp-solver-api-collection",
 		"name": "TSP Solver API",
-		"description": "Complete API collection for the Travelling Salesman Problem Solver backend. Tests all endpoints including file upload, address upload, solving algorithms, and retrieving solutions. Uses organized test files from txt/ folder with algorithm-specific datasets.",
+		"description": "Complete API collection for the Travelling Salesman Problem Solver backend. Tests all endpoints including file upload, solving algorithms, and retrieving solutions. Uses organized test files from txt/ folder with algorithm-specific datasets.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "tsp-api-v2"
 	},
@@ -198,64 +198,6 @@
 					]
 				},
 				"description": "Upload a coordinate file with 30 points. Expected to use MetaheuristicTSPSolver (Simulated Annealing).\n\nFile: txt/metaheuristic_30_points.txt\n```\n0.0,0.0\n7.0,14.0\n18.0,22.0\n[...additional points]\n```"
-			},
-			"response": []
-		},
-		{
-			"name": "Upload Real-World Addresses",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Status code is 200', function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test('Response has id', function () {",
-							"    const responseJson = pm.response.json();",
-							"    pm.expect(responseJson).to.have.property('id');",
-							"    pm.environment.set('addressesId', responseJson.id);",
-							"});",
-							"",
-							"pm.test('Status is GEOCODED', function () {",
-							"    const responseJson = pm.response.json();",
-							"    pm.expect(responseJson.status).to.eql('GEOCODED');",
-							"});",
-							"",
-							"pm.test('Real world demo flag is true', function () {",
-							"    const responseJson = pm.response.json();",
-							"    pm.expect(responseJson.realWorldDemo).to.eql(true);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"addresses\": [\n    \"1600 Amphitheatre Parkway, Mountain View, CA\",\n    \"1 Hacker Way, Menlo Park, CA\",\n    \"1 Apple Park Way, Cupertino, CA\",\n    \"350 Mission St, San Francisco, CA\",\n    \"410 Terry Ave N, Seattle, WA\"\n  ],\n  \"mode\": \"DEMO\"\n}"
-				},
-				"url": {
-					"raw": "{{baseUrl}}/api/tsp/upload-addresses",
-					"host": [
-						"{{baseUrl}}"
-					],
-					"path": [
-						"api",
-						"tsp",
-						"upload-addresses"
-					]
-				},
-				"description": "Upload real-world addresses for the Google Maps integration demo. This tests the address geocoding functionality."
 			},
 			"response": []
 		},
@@ -464,52 +406,6 @@
 					]
 				},
 				"description": "Solve TSP with manually specified algorithm (override automatic selection). This forces the use of heuristic solver even for small problems."
-			},
-			"response": []
-		},
-		{
-			"name": "Solve Addresses TSP (Real-World)",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('Status code is 200', function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test('Real world demo flag is maintained', function () {",
-							"    const responseJson = pm.response.json();",
-							"    pm.expect(responseJson.realWorldDemo).to.eql(true);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "{{baseUrl}}/api/tsp/{{addressesId}}/solve?useRealDistances=true",
-					"host": [
-						"{{baseUrl}}"
-					],
-					"path": [
-						"api",
-						"tsp",
-						"{{addressesId}}",
-						"solve"
-					],
-					"query": [
-						{
-							"key": "useRealDistances",
-							"value": "true",
-							"description": "Use real driving distances from Google Maps"
-						}
-					]
-				},
-				"description": "Solve the real-world addresses TSP using Google Maps integration for actual driving distances."
 			},
 			"response": []
 		},

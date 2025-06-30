@@ -65,12 +65,7 @@ public class SimpleAPITest {
         try {
             ObjectMapper mapper = new ObjectMapper();
             
-            // Test UploadAddressesRequest
-            UploadAddressesRequest request = new UploadAddressesRequest();
-            request.setAddresses(Arrays.asList("Address 1", "Address 2", "Address 3"));
-            request.setMode("DEMO");
-            String requestJson = mapper.writeValueAsString(request);
-            System.out.println("✓ Upload request: " + requestJson);
+            // Test removed - UploadAddressesRequest no longer exists
             
             // Test SolutionsResponse
             TSPSolution solution = new TSPSolution();

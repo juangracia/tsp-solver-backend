@@ -1,7 +1,6 @@
 package com.tsp.controller;
 
 import com.tsp.dto.SolutionsResponse;
-import com.tsp.dto.UploadAddressesRequest;
 import com.tsp.model.TSPSolution;
 import com.tsp.service.TSPService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,34 +58,6 @@ public class TSPController {
         }
     }
     
-    @Operation(summary = "Upload a list of addresses", 
-        description = "Upload a list of addresses for TSP solving. Addresses will be geocoded to coordinates.")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Addresses uploaded and processed successfully",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = TSPSolution.class))),
-        @ApiResponse(responseCode = "400", description = "Invalid addresses format", 
-            content = @Content(mediaType = "text/plain")),
-        @ApiResponse(responseCode = "500", description = "Internal server error", 
-            content = @Content(mediaType = "text/plain"))
-    })
-    @PostMapping(value = "/upload-addresses", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> uploadAddresses(
-        @Parameter(description = "List of addresses and mode", required = true,
-            content = @Content(examples = {
-                @ExampleObject(name = "Sample Address Request",
-                    value = "{\"addresses\":[\"123 Main St, New York, NY\", \"456 Park Ave, Boston, MA\", \"789 Ocean Blvd, Miami, FL\"],\"mode\":\"DRIVING\"}")
-            }))
-        @Valid @RequestBody UploadAddressesRequest request) {
-        try {
-            TSPSolution solution = tspService.uploadAddresses(request.getAddresses(), request.getMode());
-            return ResponseEntity.ok(solution);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Internal server error: " + e.getMessage());
-        }
-    }
     
     @Operation(summary = "Solve TSP for a given dataset", 
         description = "Solve the TSP problem for a previously uploaded dataset using the specified algorithm")
@@ -106,10 +77,9 @@ public class TSPController {
             @RequestParam(required = false) String algorithm,
             @Parameter(description = "Maximum time in seconds for the algorithm to run", example = "30")
             @RequestParam(required = false) Integer maxTime,
-            @Parameter(description = "Whether to use real distances from Google Maps API", example = "true")
             @RequestParam(required = false) Boolean useRealDistances) {
         try {
-            TSPSolution solution = tspService.solveTSP(id, algorithm, maxTime, useRealDistances);
+            TSPSolution solution = tspService.solveTSP(id, algorithm, maxTime, null);
             return ResponseEntity.ok(solution);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

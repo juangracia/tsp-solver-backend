@@ -9,7 +9,6 @@ A production-ready Spring Boot REST API backend that solves the Travelling Sales
   - 11-25 points: Heuristic (Nearest Neighbor + 2-opt improvement)
   - 26+ points: Metaheuristic (Simulated Annealing)
 - **File Upload**: Support for coordinate files (.txt format)
-- **Google Maps Integration**: Optional real-world address geocoding
 - **RESTful API**: Comprehensive REST endpoints
 - **H2 Database**: In-memory database for solution storage
 - **Railway Ready**: Configured for Railway deployment
@@ -51,20 +50,11 @@ POST /api/tsp/upload
 Content-Type: multipart/form-data
 ```
 
-#### Upload Addresses (Real-World Demo)
-```
-POST /api/tsp/upload-addresses
-Content-Type: application/json
-{
-  "addresses": ["Address 1", "Address 2", "Address 3"],
-  "mode": "DEMO"
-}
-```
 
 #### Solve TSP
 ```
 POST /api/tsp/{id}/solve
-Query params: algorithm, maxTime, useRealDistances
+Query params: algorithm, maxTime
 ```
 
 #### Get Solution
@@ -180,9 +170,6 @@ spring.datasource.url=jdbc:h2:mem:tspdb
 # File Upload
 spring.servlet.multipart.max-file-size=10MB
 
-# Google Maps (Optional)
-google.maps.api.key=${GOOGLE_MAPS_API_KEY:}
-google.maps.api.enabled=${GOOGLE_MAPS_ENABLED:false}
 ```
 
 ## Performance Benchmarks (Actual vs Target)
@@ -198,13 +185,6 @@ google.maps.api.enabled=${GOOGLE_MAPS_ENABLED:false}
 - 15 points: NEAREST_NEIGHBOR_2OPT → 123.49 distance (1ms)  
 - 30 points: SIMULATED_ANNEALING → 451.23 distance (47ms)
 
-## Google Maps Integration
-
-Optional feature for real-world demonstrations:
-
-1. Set `GOOGLE_MAPS_API_KEY` environment variable
-2. Set `GOOGLE_MAPS_ENABLED=true`
-3. Use `/upload-addresses` endpoint for real addresses
 
 ## Error Handling
 

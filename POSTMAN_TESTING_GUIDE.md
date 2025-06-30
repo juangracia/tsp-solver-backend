@@ -40,14 +40,10 @@ Execute requests in order or run the entire collection with the Collection Runne
 - **Medium File (15 points)**: Tests heuristic algorithm selection
 - **Invalid File**: Tests error handling
 
-#### 3. **Address Upload**
-- **Real-World Addresses**: Tests Google Maps integration
-- **Expected**: GEOCODED status with address info
 
 #### 4. **TSP Solving Tests**
 - **Auto Algorithm Selection**: System chooses best algorithm
 - **Forced Algorithm**: Manual algorithm override
-- **Real-World Solving**: Uses actual driving distances
 
 #### 5. **Solution Retrieval**
 - **Get by ID**: Retrieve specific solution
@@ -93,22 +89,19 @@ pm.test('Has route with correct number of points', function () {
 1. **Health Check** - Verify server is running
 2. **Upload Small File** - Test exact algorithm path
 3. **Upload Medium File** - Test heuristic algorithm path
-4. **Upload Addresses** - Test real-world features
-5. **Solve Small TSP** - Test exact solving
-6. **Solve Medium TSP** - Test heuristic solving
-7. **Solve with Forced Algorithm** - Test algorithm override
-8. **Solve Addresses TSP** - Test Google Maps integration
-9. **Get Solution by ID** - Test retrieval
-10. **Get All Solutions** - Test listing
-11. **Delete Solution** - Test cleanup
-12. **Error Tests** - Test invalid inputs
+4. **Solve Small TSP** - Test exact solving
+5. **Solve Medium TSP** - Test heuristic solving
+6. **Solve with Forced Algorithm** - Test algorithm override
+7. **Get Solution by ID** - Test retrieval
+8. **Get All Solutions** - Test listing
+9. **Delete Solution** - Test cleanup
+10. **Error Tests** - Test invalid inputs
 
 ### Environment Variables
 
 The collection automatically manages these variables:
 - `smallFileId` - ID from small file upload
-- `mediumFileId` - ID from medium file upload  
-- `addressesId` - ID from address upload
+- `mediumFileId` - ID from medium file upload
 
 ## 📊 Expected Results
 
@@ -158,11 +151,6 @@ Switch between environments by changing `baseUrl`:
 - **Local**: `http://localhost:8080`
 - **Production**: `https://your-app.railway.app`
 
-### Google Maps Integration
-To test real-world features:
-1. Set `GOOGLE_MAPS_API_KEY` environment variable
-2. Set `GOOGLE_MAPS_ENABLED=true` in application.properties
-3. Use "Solve Addresses TSP" test with `useRealDistances=true`
 
 ## 🐛 Troubleshooting
 
@@ -207,6 +195,5 @@ A successful test run should show:
 - ✅ Solving completes within time limits
 - ✅ Solutions have valid routes and distances
 - ✅ Error cases return appropriate status codes
-- ✅ Real-world integration works (if configured)
 
 This collection provides complete coverage of the TSP API functionality and validates all requirements from the project specification.

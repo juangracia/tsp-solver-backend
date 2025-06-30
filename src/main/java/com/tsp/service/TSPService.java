@@ -36,27 +36,6 @@ public class TSPService {
         return repository.save(solution);
     }
     
-    public TSPSolution uploadAddresses(List<String> addresses, String mode) {
-        List<Point> points = new ArrayList<>();
-        List<TSPSolution.AddressInfo> addressInfos = new ArrayList<>();
-        
-        for (int i = 0; i < addresses.size(); i++) {
-            String address = addresses.get(i);
-            // Create coordinates with the same values as x/y for demonstration
-            Coordinates coordinates = new Coordinates((double) i, (double) i);
-            Point point = new Point((double) i, (double) i, address, coordinates);
-            points.add(point);
-            
-            addressInfos.add(new TSPSolution.AddressInfo(address, null, null));
-        }
-        
-        TSPSolution solution = new TSPSolution(points, "addresses.txt");
-        solution.setStatus(SolutionStatus.GEOCODED);
-        solution.setRealWorldDemo(true);
-        solution.setAddresses(addressInfos);
-        
-        return repository.save(solution);
-    }
     
     public TSPSolution solveTSP(String id, String algorithm, Integer maxTime, Boolean useRealDistances) {
         Optional<TSPSolution> optionalSolution = repository.findById(id);

@@ -57,7 +57,6 @@ All TSP algorithms have been implemented and tested successfully:
 **✅ REST API Endpoints**
 All endpoints implemented according to specification:
 - `POST /api/tsp/upload` - File upload ✓
-- `POST /api/tsp/upload-addresses` - Address upload ✓
 - `POST /api/tsp/{id}/solve` - Solve TSP ✓
 - `GET /api/tsp/{id}` - Get solution ✓
 - `GET /api/tsp` - Get all solutions ✓
@@ -66,7 +65,6 @@ All endpoints implemented according to specification:
 - CORS configuration for frontend ✓
 - H2 database setup ✓
 - Application properties configured ✓
-- Google Maps service prepared ✓
 - Docker configuration included ✓
 
 ## 🚀 Performance Benchmarks
@@ -84,7 +82,6 @@ All endpoints implemented according to specification:
 - ✅ Maven build system
 - ✅ H2 in-memory database
 - ✅ Jackson JSON processing
-- ✅ Google Maps API integration ready
 - ✅ JUnit 5 testing framework
 
 ## 📋 API Testing Instructions
@@ -98,10 +95,6 @@ mvn spring-boot:run
 # 2. Test file upload
 curl -X POST -F 'file=@test_points.txt' http://localhost:8080/api/tsp/upload
 
-# 3. Test address upload  
-curl -X POST -H "Content-Type: application/json" \
-  -d '{"addresses":["Address 1","Address 2"],"mode":"DEMO"}' \
-  http://localhost:8080/api/tsp/upload-addresses
 
 # 4. Solve TSP (replace {id})
 curl -X POST http://localhost:8080/api/tsp/{id}/solve
@@ -114,7 +107,6 @@ curl http://localhost:8080/api/tsp/{id}
 
 1. **Database Persistence**: Complex JSON mapping with H2 needs adjustment for production
 2. **Test Dependencies**: Some unit tests need Spring Boot context fixes for Java 24
-3. **Google Maps**: Requires API key configuration for real-world features
 
 ## ✅ Ready for Frontend Integration
 
