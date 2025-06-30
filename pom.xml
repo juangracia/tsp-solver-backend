@@ -63,12 +63,6 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
 
-        <!-- Google Maps API (Optional) -->
-        <dependency>
-            <groupId>com.google.maps</groupId>
-            <artifactId>google-maps-services</artifactId>
-            <version>2.2.0</version>
-        </dependency>
 
         <!-- Apache Commons -->
         <dependency>

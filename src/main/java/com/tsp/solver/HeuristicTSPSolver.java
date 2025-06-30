@@ -79,55 +79,55 @@ public class HeuristicTSPSolver implements TSPSolver {
     /**
      * Constructs an initial TSP tour using the Nearest Neighbor algorithm.
      * <p>
-     * This greedy algorithm starts from the first city and repeatedly visits
-     * the nearest unvisited city until all cities have been visited.
+     * This greedy algorithm starts from the first point and repeatedly visits
+     * the nearest unvisited point until all points have been visited.
      * </p>
      * <p>
      * Time complexity: O(n²) where n is the number of points.
      * </p>
      *
      * @param points List of points to visit
-     * @return List of city indices in the constructed tour order
+     * @return List of point indices in the constructed tour order
      */
     private List<Integer> nearestNeighborConstruction(List<Point> points) {
         int n = points.size();
         List<Integer> tour = new ArrayList<>();  // Will hold the ordered tour
-        Set<Integer> visited = new HashSet<>();  // Tracks which cities have been visited
+        Set<Integer> visited = new HashSet<>();  // Tracks which points have been visited
         
         // Handle edge case of empty input
         if (n == 0) return tour;
         
-        // Step 1: Always start with the first city (index 0)
-        int currentCity = 0;
-        tour.add(currentCity);  // Add starting city to tour
-        visited.add(currentCity);  // Mark as visited
+        // Step 1: Always start with the first point (index 0)
+        int currentPoint = 0;
+        tour.add(currentPoint);  // Add starting point to tour
+        visited.add(currentPoint);  // Mark as visited
         
-        // Step 2: Iteratively find and add the nearest unvisited city
-        // Continue until all cities are in the tour
+        // Step 2: Iteratively find and add the nearest unvisited point
+        // Continue until all points are in the tour
         while (visited.size() < n) {
             double minDistance = Double.MAX_VALUE;
-            int nearestCity = -1;
+            int nearestPoint = -1;
             
-            // Step 2a: Find the nearest unvisited city to the current city
+            // Step 2a: Find the nearest unvisited point to the current point
             for (int i = 0; i < n; i++) {
-                // Skip cities we've already visited
+                // Skip points we've already visited
                 if (visited.contains(i)) continue;
                 
-                // Calculate distance to this unvisited city
-                double distance = points.get(currentCity).distanceTo(points.get(i));
+                // Calculate distance to this unvisited point
+                double distance = points.get(currentPoint).distanceTo(points.get(i));
                 
-                // Update if this is the closest unvisited city so far
+                // Update if this is the closest unvisited point so far
                 if (distance < minDistance) {
                     minDistance = distance;
-                    nearestCity = i;
+                    nearestPoint = i;
                 }
             }
             
-            // Step 2b: Add the nearest city to our tour
-            if (nearestCity != -1) {
-                tour.add(nearestCity);          // Add to tour
-                visited.add(nearestCity);       // Mark as visited
-                currentCity = nearestCity;      // Move to this city
+            // Step 2b: Add the nearest point to our tour
+            if (nearestPoint != -1) {
+                tour.add(nearestPoint);          // Add to tour
+                visited.add(nearestPoint);       // Mark as visited
+                currentPoint = nearestPoint;      // Move to this point
             } else {
                 // This should never happen if the graph is complete
                 break;
@@ -238,12 +238,12 @@ public class HeuristicTSPSolver implements TSPSolver {
     /**
      * Calculates the total distance of a tour.
      * <p>
-     * Includes the return distance from the last city to the first city
+     * Includes the return distance from the last point to the first point
      * to complete the tour.
      * </p>
      *
      * @param points List of points
-     * @param tour List of city indices in visitation order
+     * @param tour List of point indices in visitation order
      * @return Total distance of the tour
      */
     private double calculateTourDistance(List<Point> points, List<Integer> tour) {
@@ -259,7 +259,7 @@ public class HeuristicTSPSolver implements TSPSolver {
             distance += points.get(currentCity).distanceTo(points.get(nextCity));
         }
         
-        // Step 2: Complete the tour by adding the distance from the last city back to the first
+        // Step 2: Complete the tour by adding the distance from the last point back to the first
         int lastCity = tour.get(tour.size() - 1);
         int firstCity = tour.get(0);
         distance += points.get(lastCity).distanceTo(points.get(firstCity));
@@ -270,25 +270,25 @@ public class HeuristicTSPSolver implements TSPSolver {
     /**
      * Builds the final route as a list of RoutePoint objects.
      * <p>
-     * Converts from a list of city indices to a list of RoutePoint objects
+     * Converts from a list of point indices to a list of RoutePoint objects
      * that include both the point coordinates and the order in the route.
      * </p>
      *
      * @param points List of original points
-     * @param tour List of city indices in the optimal order
+     * @param tour List of point indices in the optimal order
      * @return List of RoutePoint objects representing the final solution
      */
     private List<RoutePoint> buildRoute(List<Point> points, List<Integer> tour) {
         // Create a new list to hold the route points in order
         List<RoutePoint> route = new ArrayList<>();
         
-        // Convert each city index in the tour to a RoutePoint with its position
+        // Convert each point index in the tour to a RoutePoint with its position
         for (int i = 0; i < tour.size(); i++) {
-            // Get the point corresponding to this city in the tour
-            int cityIndex = tour.get(i);
-            Point point = points.get(cityIndex);
+            // Get the point corresponding to this point index in the tour
+            int pointIndex = tour.get(i);
+            Point point = points.get(pointIndex);
             
-            // Create a RoutePoint with the city's coordinates and its position in the tour
+            // Create a RoutePoint with the point's coordinates and its position in the tour
             route.add(new RoutePoint(point, i));
         }
         

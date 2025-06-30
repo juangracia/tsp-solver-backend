@@ -31,11 +31,6 @@ public class TSPSolution {
     @Column(name = "total_distance")
     private Double totalDistance;
     
-    @Column(name = "real_world_distance")
-    private String realWorldDistance;
-    
-    @Column(name = "estimated_drive_time")
-    private String estimatedDriveTime;
     
     @Column(name = "algorithm")
     private String algorithm;
@@ -53,21 +48,11 @@ public class TSPSolution {
     @Column(name = "point_count")
     private Integer pointCount;
     
-    @Column(name = "real_world_demo")
-    private Boolean realWorldDemo;
-    
-    @Column(name = "map_url")
-    private String mapUrl;
-    
-    @ElementCollection
-    @CollectionTable(name = "tsp_solution_addresses")
-    private List<AddressInfo> addresses;
 
     public TSPSolution() {
         this.id = UUID.randomUUID().toString();
         this.createdAt = LocalDateTime.now();
         this.status = SolutionStatus.UPLOADED;
-        this.realWorldDemo = false;
     }
 
     public TSPSolution(List<Point> originalPoints, String fileName) {
@@ -118,21 +103,6 @@ public class TSPSolution {
         this.totalDistance = totalDistance;
     }
 
-    public String getRealWorldDistance() {
-        return realWorldDistance;
-    }
-
-    public void setRealWorldDistance(String realWorldDistance) {
-        this.realWorldDistance = realWorldDistance;
-    }
-
-    public String getEstimatedDriveTime() {
-        return estimatedDriveTime;
-    }
-
-    public void setEstimatedDriveTime(String estimatedDriveTime) {
-        this.estimatedDriveTime = estimatedDriveTime;
-    }
 
     public String getAlgorithm() {
         return algorithm;
@@ -174,70 +144,6 @@ public class TSPSolution {
         this.pointCount = pointCount;
     }
 
-    public Boolean getRealWorldDemo() {
-        return realWorldDemo;
-    }
 
-    public void setRealWorldDemo(Boolean realWorldDemo) {
-        this.realWorldDemo = realWorldDemo;
-    }
 
-    public String getMapUrl() {
-        return mapUrl;
-    }
-
-    public void setMapUrl(String mapUrl) {
-        this.mapUrl = mapUrl;
-    }
-
-    public List<AddressInfo> getAddresses() {
-        return addresses;
-    }
-
-    public void setAddresses(List<AddressInfo> addresses) {
-        this.addresses = addresses;
-    }
-
-    @Embeddable
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class AddressInfo {
-        private String address;
-        
-        @Embedded
-        private Coordinates coordinates;
-        
-        private String placeId;
-
-        public AddressInfo() {}
-
-        public AddressInfo(String address, Coordinates coordinates, String placeId) {
-            this.address = address;
-            this.coordinates = coordinates;
-            this.placeId = placeId;
-        }
-
-        public String getAddress() {
-            return address;
-        }
-
-        public void setAddress(String address) {
-            this.address = address;
-        }
-
-        public Coordinates getCoordinates() {
-            return coordinates;
-        }
-
-        public void setCoordinates(Coordinates coordinates) {
-            this.coordinates = coordinates;
-        }
-
-        public String getPlaceId() {
-            return placeId;
-        }
-
-        public void setPlaceId(String placeId) {
-            this.placeId = placeId;
-        }
-    }
 }

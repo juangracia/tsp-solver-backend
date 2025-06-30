@@ -19,8 +19,8 @@ Comprehensive test results for the TSP Solver REST API. All endpoints tested and
 | Category | Tests | Status | Coverage |
 |----------|-------|--------|----------|
 | **Health Check** | 1 | ✅ PASS | Application health monitoring |
-| **File Upload** | 3 | ✅ PASS | Coordinate files, addresses, error handling |
-| **TSP Solving** | 4 | ✅ PASS | All algorithms, manual override, addresses |
+| **File Upload** | 2 | ✅ PASS | Coordinate files, error handling |
+| **TSP Solving** | 3 | ✅ PASS | All algorithms, manual override |
 | **Data Retrieval** | 2 | ✅ PASS | Single solution, all solutions |
 | **Error Handling** | 4 | ✅ PASS | Invalid files, 404s, validation |
 | **Data Management** | 2 | ✅ PASS | Delete operations, verification |
@@ -50,11 +50,7 @@ Comprehensive test results for the TSP Solver REST API. All endpoints tested and
 - **Expected Algorithm:** NEAREST_NEIGHBOR_2OPT (11-25 points)
 - **Verification:** File parsing, point count validation
 
-#### Real-World Addresses
-- **Endpoint:** `POST /api/tsp/upload-addresses`
-- **Status:** ✅ PASS
-- **Test Data:** 5 US city addresses
-- **Verification:** Geocoding simulation, real-world demo flag
+
 
 ### 🎯 TSP Solving Tests
 
@@ -76,12 +72,7 @@ Comprehensive test results for the TSP Solver REST API. All endpoints tested and
 - **Route:** Complete 15-point tour
 - **Distance:** 123.49 units
 
-#### Address-Based TSP
-- **Endpoint:** `POST /api/tsp/{id}/solve`
-- **Status:** ✅ PASS
-- **Algorithm Used:** BRUTE_FORCE (5 addresses)
-- **Performance:** <1ms
-- **Special Features:** Address preservation, real-world demo mode
+
 
 #### Manual Algorithm Override
 - **Endpoint:** `POST /api/tsp/{id}/solve?algorithm=heuristic`
@@ -147,7 +138,7 @@ Comprehensive test results for the TSP Solver REST API. All endpoints tested and
 |-------------|-----------|-------------|-------------|-------------|
 | 5 points | BRUTE_FORCE | 1ms | <1s | **99.9% faster** |
 | 15 points | NEAREST_NEIGHBOR_2OPT | 5ms | <5s | **99.9% faster** |
-| 3 addresses | BRUTE_FORCE | 0ms | <1s | **Instant** |
+
 
 ### Algorithm Selection Logic ✅ VERIFIED
 
@@ -172,7 +163,7 @@ if (pointCount <= 10) {
 |--------|----------|--------|---------|
 | GET | `/actuator/health` | ✅ WORKING | Health check |
 | POST | `/api/tsp/upload` | ✅ WORKING | Upload coordinate files |
-| POST | `/api/tsp/upload-addresses` | ✅ WORKING | Upload real-world addresses |
+
 | POST | `/api/tsp/{id}/solve` | ✅ WORKING | Solve TSP problem |
 | GET | `/api/tsp/{id}` | ✅ WORKING | Get solution by ID |
 | GET | `/api/tsp` | ✅ WORKING | Get all solutions |
@@ -223,18 +214,12 @@ curl -X POST \
   http://localhost:8080/api/tsp/{id}/solve
 ```
 
-### Upload Addresses
-```bash
-curl -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"addresses":["New York, NY","Los Angeles, CA"]}' \
-  http://localhost:8080/api/tsp/upload-addresses
-```
+
 
 ## Database Verification
 
 ### H2 Database Operations ✅ VERIFIED
-- ✅ **CREATE:** Solutions, points, routes, addresses
+- ✅ **CREATE:** Solutions, points, routes
 - ✅ **READ:** Individual and bulk retrievals
 - ✅ **UPDATE:** Solution status and results after solving
 - ✅ **DELETE:** Cascade deletion of related entities
@@ -293,7 +278,7 @@ curl -X POST \
 
 ## Known Limitations
 
-1. **Google Maps Integration:** Requires API key for real distance calculations (currently uses demo mode)
+
 2. **Database:** H2 in-memory (data lost on restart) - ready for PostgreSQL migration
 3. **File Upload:** Currently supports .txt format only (can be extended)
 4. **Large Problems:** 26+ points use metaheuristic (optimal solution not guaranteed)

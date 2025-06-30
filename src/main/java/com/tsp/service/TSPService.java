@@ -4,6 +4,7 @@ import com.tsp.model.*;
 import com.tsp.repository.TSPSolutionRepository;
 import com.tsp.solver.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +28,12 @@ public class TSPService {
     @Autowired
     private MetaheuristicTSPSolver metaheuristicSolver;
     
+    @Value("${tsp.algorithm.exact-max-points:10}")
+    private int exactMaxPoints;
+    
+    @Value("${tsp.algorithm.heuristic-max-points:25}")
+    private int heuristicMaxPoints;
+    
     public TSPSolution uploadFile(MultipartFile file) throws IOException {
         validateFile(file);
         
@@ -37,7 +44,7 @@ public class TSPService {
     }
     
     
-    public TSPSolution solveTSP(String id, String algorithm, Integer maxTime, Boolean useRealDistances) {
+    public TSPSolution solveTSP(String id, String algorithm, Integer maxTime) {
         Optional<TSPSolution> optionalSolution = repository.findById(id);
         if (optionalSolution.isEmpty()) {
             throw new RuntimeException("Solution not found with id: " + id);
@@ -57,14 +64,6 @@ public class TSPService {
             solution.setExecutionTimeMs(result.getExecutionTimeMs());
             solution.setStatus(SolutionStatus.SOLVED);
             
-            // Fix route coordinates before saving
-            // fixRouteCoordinates(solution);  // Temporarily disabled to test
-            
-            if (Boolean.TRUE.equals(useRealDistances) && Boolean.TRUE.equals(solution.getRealWorldDemo())) {
-                solution.setRealWorldDistance(String.format("%.1f km", result.getTotalDistance()));
-                solution.setEstimatedDriveTime(estimateDriveTime(result.getTotalDistance()));
-            }
-            
             return repository.save(solution);
             
         } catch (Exception e) {
@@ -75,52 +74,14 @@ public class TSPService {
     }
     
     public Optional<TSPSolution> getSolution(String id) {
-        Optional<TSPSolution> solution = repository.findById(id);
-        // solution.ifPresent(this::fixRouteCoordinates);  // Temporarily disabled to test
-        return solution;
+        return repository.findById(id);
     }
     
     public List<TSPSolution> getAllSolutions() {
-        List<TSPSolution> solutions = repository.findAll();
-        // solutions.forEach(this::fixRouteCoordinates);  // Temporarily disabled to test
-        return solutions;
+        return repository.findAll();
     }
     
-    /**
-     * Fixes the route coordinates after retrieving from the database.
-     * This is needed because the coordinates are not properly persisted in the database.
-     * 
-     * @param solution The solution to fix
-     */
-    private void fixRouteCoordinates(TSPSolution solution) {
-        if (solution.getRoute() == null || solution.getOriginalPoints() == null) {
-            return;
-        }
-        
-        // Map of original points by order
-        for (int i = 0; i < solution.getRoute().size(); i++) {
-            RoutePoint routePoint = solution.getRoute().get(i);
-            int order = routePoint.getOrder();
-            
-            // For order 0, use the first original point
-            if (order == 0 && !solution.getOriginalPoints().isEmpty()) {
-                Point originalPoint = solution.getOriginalPoints().get(0);
-                routePoint.setX(originalPoint.getX());
-                routePoint.setY(originalPoint.getY());
-                routePoint.setCoordinates(originalPoint.getCoordinates());
-                continue;
-            }
-            
-            // For other orders, find the corresponding original point
-            if (order > 0 && order <= solution.getOriginalPoints().size()) {
-                // The route order is 1-based for points after the first, but the list is 0-based
-                Point originalPoint = solution.getOriginalPoints().get(order - 1);
-                routePoint.setX(originalPoint.getX());
-                routePoint.setY(originalPoint.getY());
-                routePoint.setCoordinates(originalPoint.getCoordinates());
-            }
-        }
-    }
+
     
     public void deleteSolution(String id) {
         repository.deleteById(id);
@@ -135,9 +96,9 @@ public class TSPService {
             return metaheuristicSolver;
         }
         
-        if (pointCount <= 10) {
+        if (pointCount <= exactMaxPoints) {
             return exactSolver;
-        } else if (pointCount <= 25) {
+        } else if (pointCount <= heuristicMaxPoints) {
             return heuristicSolver;
         } else {
             return metaheuristicSolver;
@@ -200,17 +161,5 @@ public class TSPService {
         return points;
     }
     
-    private String estimateDriveTime(double distanceKm) {
-        double averageSpeedKmh = 50.0;
-        double timeHours = distanceKm / averageSpeedKmh;
-        
-        int hours = (int) timeHours;
-        int minutes = (int) ((timeHours - hours) * 60);
-        
-        if (hours > 0) {
-            return String.format("%dh %dm", hours, minutes);
-        } else {
-            return String.format("%dm", minutes);
-        }
-    }
+
 }

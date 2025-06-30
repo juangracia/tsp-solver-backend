@@ -6,12 +6,10 @@ import com.tsp.service.TSPService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -76,10 +74,9 @@ public class TSPController {
             @Parameter(description = "Algorithm to use: NEAREST_NEIGHBOR, TWO_OPT, SIMULATED_ANNEALING, or GENETIC", example = "TWO_OPT")
             @RequestParam(required = false) String algorithm,
             @Parameter(description = "Maximum time in seconds for the algorithm to run", example = "30")
-            @RequestParam(required = false) Integer maxTime,
-            @RequestParam(required = false) Boolean useRealDistances) {
+            @RequestParam(required = false) Integer maxTime) {
         try {
-            TSPSolution solution = tspService.solveTSP(id, algorithm, maxTime, null);
+            TSPSolution solution = tspService.solveTSP(id, algorithm, maxTime);
             return ResponseEntity.ok(solution);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

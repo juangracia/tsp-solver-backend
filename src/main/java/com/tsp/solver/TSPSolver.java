@@ -9,9 +9,9 @@ import java.util.List;
  * Interface for algorithms that solve the Traveling Salesman Problem (TSP).
  * <p>
  * The Traveling Salesman Problem is a classic algorithmic problem in computer science:
- * Given a list of cities (points) and the distances between each pair of cities, 
- * find the shortest possible route that visits each city exactly once and returns 
- * to the origin city.
+ * Given a list of points and the distances between each pair of points, 
+ * find the shortest possible route that visits each point exactly once and returns 
+ * to the origin point.
  * </p>
  * <p>
  * Implementations of this interface provide different algorithms to solve the TSP

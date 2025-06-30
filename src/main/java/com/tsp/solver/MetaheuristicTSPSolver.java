@@ -116,7 +116,7 @@ public class MetaheuristicTSPSolver implements TSPSolver {
      * </p>
      *
      * @param points List of points to visit
-     * @return List of city indices in the best found tour order
+     * @return List of point indices in the best found tour order
      */
     private List<Integer> simulatedAnnealing(List<Point> points) {
         int n = points.size();
@@ -169,17 +169,17 @@ public class MetaheuristicTSPSolver implements TSPSolver {
     /**
      * Generates a random initial solution for the simulated annealing algorithm.
      * <p>
-     * Creates a permutation of all city indices and shuffles it randomly.
+     * Creates a permutation of all point indices and shuffles it randomly.
      * </p>
      *
      * @param n Number of cities (points)
-     * @return Random permutation of city indices
+     * @return Random permutation of point indices
      */
     private List<Integer> generateInitialSolution(int n) {
-        // Step 1: Create a list containing all city indices (0 to n-1)
+        // Step 1: Create a list containing all point indices (0 to n-1)
         List<Integer> tour = new ArrayList<>();
         for (int i = 0; i < n; i++) {
-            tour.add(i);  // Add each city to the tour
+            tour.add(i);  // Add each point to the tour
         }
         
         // Step 2: Randomly shuffle the cities to create an initial random tour
@@ -220,7 +220,7 @@ public class MetaheuristicTSPSolver implements TSPSolver {
             // Simple swap of two cities
             swapMutation(neighbor);
         } else {                // 10% chance for insertion mutation
-            // Remove a city and insert it elsewhere
+            // Remove a point and insert it elsewhere
             insertMutation(neighbor);
         }
         
@@ -284,7 +284,7 @@ public class MetaheuristicTSPSolver implements TSPSolver {
     /**
      * Performs an insertion mutation on the tour.
      * <p>
-     * Removes a city from one position and inserts it at another position in the tour.
+     * Removes a point from one position and inserts it at another position in the tour.
      * </p>
      *
      * @param tour Tour to mutate (modified in-place)
@@ -294,22 +294,22 @@ public class MetaheuristicTSPSolver implements TSPSolver {
         // Skip mutation if the tour is too small
         if (n < 3) return;
         
-        // Step 1: Select a random position i to remove a city from
+        // Step 1: Select a random position i to remove a point from
         int i = random.nextInt(n);
         
-        // Step 2: Select a random position j to insert the city
+        // Step 2: Select a random position j to insert the point
         // Ensure j is not i or immediately after i (which would result in no change)
         int j = random.nextInt(n);
         while (j == i || j == (i + 1) % n) j = random.nextInt(n);
         
-        // Step 3: Remove the city from position i
-        int city = tour.remove(i);
+        // Step 3: Remove the point from position i
+        int pointIndex = tour.remove(i);
         
         // Step 4: Adjust j if necessary (if j was after i, its index decreases after removal)
         if (j > i) j--;
         
-        // Step 5: Insert the city at position j
-        tour.add(j, city);
+        // Step 5: Insert the point at position j
+        tour.add(j, pointIndex);
         
         // The tour is now modified in-place with the insertion move applied
     }
@@ -353,16 +353,16 @@ public class MetaheuristicTSPSolver implements TSPSolver {
     /**
      * Calculates the total distance of a tour.
      * <p>
-     * Includes the return distance from the last city to the first city
+     * Includes the return distance from the last point to the first point
      * to complete the tour.
      * </p>
      *
      * @param points List of points
-     * @param tour List of city indices in visitation order
+     * @param tour List of point indices in visitation order
      * @return Total distance of the tour
      */
     private double calculateTourDistance(List<Point> points, List<Integer> tour) {
-        // Handle trivial case of empty or single-city tour
+        // Handle trivial case of empty or single-point tour
         if (tour.size() < 2) return 0.0;
         
         double distance = 0.0;
@@ -377,7 +377,7 @@ public class MetaheuristicTSPSolver implements TSPSolver {
             distance += points.get(currentCity).distanceTo(points.get(nextCity));
         }
         
-        // Step 2: Complete the tour by adding the distance from last city back to first city
+        // Step 2: Complete the tour by adding the distance from last point back to first point
         int lastCity = tour.get(tour.size() - 1);
         int firstCity = tour.get(0);
         distance += points.get(lastCity).distanceTo(points.get(firstCity));
@@ -388,26 +388,26 @@ public class MetaheuristicTSPSolver implements TSPSolver {
     /**
      * Builds the final route as a list of RoutePoint objects.
      * <p>
-     * Converts from a list of city indices to a list of RoutePoint objects
+     * Converts from a list of point indices to a list of RoutePoint objects
      * that include both the point coordinates and the order in the route.
      * </p>
      *
      * @param points List of original points
-     * @param tour List of city indices in the optimal order
+     * @param tour List of point indices in the optimal order
      * @return List of RoutePoint objects representing the final solution
      */
     private List<RoutePoint> buildRoute(List<Point> points, List<Integer> tour) {
         // Initialize the list that will hold the ordered route points
         List<RoutePoint> route = new ArrayList<>();
         
-        // Step 1: Convert each city index in the tour to a RoutePoint
-        // The RoutePoint combines the city's coordinates with its position in the tour
+        // Step 1: Convert each point index in the tour to a RoutePoint
+        // The RoutePoint combines the point's coordinates with its position in the tour
         for (int i = 0; i < tour.size(); i++) {
-            // Get the city index from the tour
-            int cityIndex = tour.get(i);
+            // Get the point index from the tour
+            int pointIndex = tour.get(i);
             
-            // Get the actual point coordinates for this city
-            Point point = points.get(cityIndex);
+            // Get the actual point coordinates for this point
+            Point point = points.get(pointIndex);
             
             // Create a RoutePoint with the coordinates and position in the tour
             route.add(new RoutePoint(point, i));

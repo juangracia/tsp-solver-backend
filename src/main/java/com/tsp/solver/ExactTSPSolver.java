@@ -74,18 +74,18 @@ public class ExactTSPSolver implements TSPSolver {
             return new TSPResult(route, 0.0, System.currentTimeMillis() - startTime, "BRUTE_FORCE");
         }
         
-        // Step 1: We assume city 0 is always the starting city (fixed)
-        // We'll permute all other cities (1 to n-1)
+        // Step 1: We assume point 0 is always the starting point (fixed)
+        // We'll permute all other points (1 to n-1)
         List<Integer> indices = new ArrayList<>();
         for (int i = 1; i < n; i++) {
-            indices.add(i); // Add cities 1, 2, ..., n-1 to our permutation list
+            indices.add(i); // Add points 1, 2, ..., n-1 to our permutation list
         }
         
         // Step 2: Track the best solution found so far
         double minDistance = Double.MAX_VALUE;
         List<Integer> bestRoute = null;
         
-        // Step 3: Enumerate all permutations of cities (except city 0)
+        // Step 3: Enumerate all permutations of points (except point 0)
         // The nextPermutation function generates the next lexicographically ordered permutation
         do {
             // Calculate the distance of the current permutation
@@ -138,12 +138,12 @@ public class ExactTSPSolver implements TSPSolver {
         
         // Step 2: Initialize memory structures for dynamic programming
         // memo stores the minimum distance for each subproblem
-        // parent stores the next city to visit in the optimal solution
+        // parent stores the next point to visit in the optimal solution
         Map<String, Double> memo = new HashMap<>();
         Map<String, Integer> parent = new HashMap<>();
         
         // Step 3: Run the Held-Karp recursive algorithm with memoization
-        // Start at city 0, with a mask of 1 (indicating city 0 is visited)
+        // Start at point 0, with a mask of 1 (indicating point 0 is visited)
         double minCost = tspDP(0, 1, n, dist, memo, parent);
         
         // Step 4: Reconstruct the optimal path from the parent map
@@ -168,11 +168,11 @@ public class ExactTSPSolver implements TSPSolver {
     /**
      * Core recursive function for the Held-Karp dynamic programming algorithm.
      * <p>
-     * This method computes the shortest path that starts at city 0, visits all cities in the mask,
+     * This method computes the shortest path that starts at point 0, visits all points in the mask,
      * and ends at position 'pos'. It uses memoization to avoid recomputing subproblems.
      * </p>
      *
-     * @param pos Current position (city)
+     * @param pos Current position (point index)
      * @param mask Bitmask representing visited cities (1 bit = visited)
      * @param n Total number of cities
      * @param dist Distance matrix between cities
@@ -182,9 +182,9 @@ public class ExactTSPSolver implements TSPSolver {
      */
     private double tspDP(int pos, int mask, int n, double[][] dist, Map<String, Double> memo, Map<String, Integer> parent) {
         // Base case: If all cities are visited (mask has all bits set)
-        // then just return to the starting city (city 0)
+        // then just return to the starting point (point 0)
         if (mask == (1 << n) - 1) {
-            return dist[pos][0]; // Return to starting city to complete the tour
+            return dist[pos][0]; // Return to starting point to complete the tour
         }
         
         // Create a unique key for this subproblem based on position and visited mask
@@ -195,24 +195,24 @@ public class ExactTSPSolver implements TSPSolver {
             return memo.get(key); // Return cached result
         }
         
-        // Find the best city to visit next
+        // Find the best point to visit next
         double result = Double.MAX_VALUE;
         int bestNext = -1;
         
-        // Try each unvisited city as the next step
-        for (int city = 0; city < n; city++) {
-            // Check if city is not yet visited (bit is not set in mask)
-            if ((mask & (1 << city)) == 0) {
-                // Mark this city as visited
-                int newMask = mask | (1 << city);
+        // Try each unvisited point as the next step
+        for (int pointIndex = 0; pointIndex < n; pointIndex++) {
+            // Check if point is not yet visited (bit is not set in mask)
+            if ((mask & (1 << pointIndex)) == 0) {
+                // Mark this point as visited
+                int newMask = mask | (1 << pointIndex);
                 
-                // Calculate cost: distance to this city + best path from this city
-                double cost = dist[pos][city] + tspDP(city, newMask, n, dist, memo, parent);
+                // Calculate cost: distance to this point + best path from this point
+                double cost = dist[pos][pointIndex] + tspDP(pointIndex, newMask, n, dist, memo, parent);
                 
                 // Update if this is a better path
                 if (cost < result) {
                     result = cost;
-                    bestNext = city;
+                    bestNext = pointIndex;
                 }
             }
         }
@@ -220,7 +220,7 @@ public class ExactTSPSolver implements TSPSolver {
         // Save the result for this subproblem
         memo.put(key, result);
         
-        // Save the best next city for path reconstruction
+        // Save the best next point for path reconstruction
         if (bestNext != -1) {
             parent.put(key, bestNext);
         }
@@ -234,35 +234,35 @@ public class ExactTSPSolver implements TSPSolver {
      * Uses the parent map built during the DP computation to trace back the sequence of cities.
      * </p>
      *
-     * @param start Starting city (typically 0)
+     * @param start Starting point index (typically 0)
      * @param mask Initial mask (typically 1 << start)
      * @param n Total number of cities
      * @param parent Parent map from DP computation
-     * @return List of city indices in the optimal order
+     * @return List of point indices in the optimal order
      */
     private List<Integer> reconstructPath(int start, int mask, int n, Map<String, Integer> parent) {
-        // Initialize the path with the starting city
+        // Initialize the path with the starting point
         List<Integer> path = new ArrayList<>();
         int current = start;
         int currentMask = mask;
         
-        path.add(current); // Add the starting city (typically city 0)
+        path.add(current); // Add the starting point (typically point 0)
         
         // Keep adding cities until all are visited (full mask would be 2^n - 1)
         while (currentMask != (1 << n) - 1) {
-            // Look up the next city in the parent map
+            // Look up the next point in the parent map
             String key = current + "," + currentMask;
             
             // Safety check in case of inconsistent parent data
             if (!parent.containsKey(key)) break;
             
-            // Get the next city in the optimal path
+            // Get the next point in the optimal path
             int next = parent.get(key);
             path.add(next); // Add to our path
             
             // Update our state:
-            currentMask |= (1 << next); // Mark the next city as visited in the mask
-            current = next; // Move to the next city
+            currentMask |= (1 << next); // Mark the next point as visited in the mask
+            current = next; // Move to the next point
         }
         
         return path;
@@ -300,17 +300,17 @@ public class ExactTSPSolver implements TSPSolver {
     /**
      * Calculates the total distance of a route.
      * <p>
-     * Includes the distance from the last city back to the starting city to complete the tour.
+     * Includes the distance from the last point back to the starting point to complete the tour.
      * </p>
      *
      * @param points List of points
-     * @param route List of city indices in visitation order
+     * @param route List of point indices in visitation order
      * @return Total distance of the route
      */
     private double calculateRouteDistance(List<Point> points, List<Integer> route) {
         double distance = 0.0;
         
-        // Step 1: Add distance from starting city (0) to the first city in route
+        // Step 1: Add distance from starting point (0) to the first point in route
         distance += points.get(0).distanceTo(points.get(route.get(0)));
         
         // Step 2: Add distances between consecutive cities in the route
@@ -320,7 +320,7 @@ public class ExactTSPSolver implements TSPSolver {
             distance += points.get(currentCity).distanceTo(points.get(nextCity));
         }
         
-        // Step 3: Add distance from the last city back to the starting city (0)  
+        // Step 3: Add distance from the last point back to the starting point (0)  
         // to complete the tour
         int lastCity = route.get(route.size() - 1);
         distance += points.get(lastCity).distanceTo(points.get(0));
@@ -331,12 +331,12 @@ public class ExactTSPSolver implements TSPSolver {
     /**
      * Builds the final route as a list of RoutePoint objects.
      * <p>
-     * Converts from a list of city indices to a list of RoutePoint objects
+     * Converts from a list of point indices to a list of RoutePoint objects
      * that include both the point coordinates and the order in the route.
      * </p>
      *
      * @param points List of original points
-     * @param bestRoute List of city indices in the optimal order
+     * @param bestRoute List of point indices in the optimal order
      * @return List of RoutePoint objects representing the final solution
      */
     private List<RoutePoint> buildRoute(List<Point> points, List<Integer> bestRoute) {
@@ -353,7 +353,7 @@ public class ExactTSPSolver implements TSPSolver {
                     "lat=" + p.getCoordinates().getLat() + ", lng=" + p.getCoordinates().getLng() : "null"));
         }
         
-        // Step 1: Add the starting point (city 0) as the first stop
+        // Step 1: Add the starting point (point 0) as the first stop
         Point startPoint = points.get(0);
         RoutePoint startRoutePoint = new RoutePoint(startPoint, 0);
         route.add(startRoutePoint);
@@ -365,11 +365,11 @@ public class ExactTSPSolver implements TSPSolver {
         
         // Step 2: Add each point in the best route with its position in the tour
         for (int i = 0; i < bestRoute.size(); i++) {
-            // Get the point corresponding to the city index in bestRoute
-            int cityIndex = bestRoute.get(i);
-            Point point = points.get(cityIndex);
+            // Get the point corresponding to the point index in bestRoute
+            int pointIndex = bestRoute.get(i);
+            Point point = points.get(pointIndex);
             
-            // Create a RoutePoint with the point and its position (i+1 because city 0 is position 0)
+            // Create a RoutePoint with the point and its position (i+1 because point 0 is position 0)
             RoutePoint routePoint = new RoutePoint(point, i + 1);
             route.add(routePoint);
             
@@ -380,7 +380,7 @@ public class ExactTSPSolver implements TSPSolver {
                 routePoint.getOrder());
         }
         
-        // The route now contains a complete tour: city 0 -> bestRoute[0] -> bestRoute[1] -> ... -> city 0
+        // The route now contains a complete tour: point 0 -> bestRoute[0] -> bestRoute[1] -> ... -> point 0
         return route;
     }
     
