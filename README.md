@@ -1,4 +1,4 @@
-# SF3 TPS Solver - Travelling Salesman Problem Backend
+# SF3 TSP Solver - Travelling Salesman Problem Backend
 
 A production-ready Spring Boot REST API backend that solves the Travelling Salesman Problem using multiple algorithms with automatic selection based on input size. **Status: ✅ FULLY FUNCTIONAL**
 
