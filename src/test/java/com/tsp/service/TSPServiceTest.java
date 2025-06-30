@@ -57,21 +57,21 @@ class TSPServiceTest {
     }
     
     @Test
-    void testUploadAddresses() {
-        List<String> addresses = Arrays.asList(
-            "Address 1",
-            "Address 2",
-            "Address 3"
-        );
-        
+    void testUploadFile() throws Exception {
         // Mock repository.save to return the actual solution passed to it
         when(repository.save(any(TSPSolution.class))).thenAnswer(invocation -> invocation.getArgument(0));
         
-        TSPSolution result = tspService.uploadAddresses(addresses, "DEMO");
+        // Create a mock MultipartFile with coordinate data
+        String fileContent = "0.0,0.0\n1.0,1.0\n2.0,0.0";
+        org.springframework.mock.web.MockMultipartFile mockFile = 
+            new org.springframework.mock.web.MockMultipartFile(
+                "file", "test.txt", "text/plain", fileContent.getBytes());
+        
+        TSPSolution result = tspService.uploadFile(mockFile);
         
         assertNotNull(result);
-        assertEquals(SolutionStatus.GEOCODED, result.getStatus());
-        assertTrue(result.getRealWorldDemo());
+        assertEquals(SolutionStatus.UPLOADED, result.getStatus());
+        assertEquals("test.txt", result.getFileName());
         verify(repository).save(any(TSPSolution.class));
     }
     
