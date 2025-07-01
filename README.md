@@ -2,6 +2,8 @@
 
 **Travelling Salesman Problem (TSP) Solution** - A Spring Boot REST API backend that solves the Travelling Salesman Problem using multiple algorithms with automatic selection based on input size.
 
+> This project was initially developed using the specifications in [project-spec.md](./project-spec.md) as an AI-friendly prompt to guide the implementation.
+
 ## 🚀 Quick Links
 
 - **🌐 Live Demo**: [https://tsp-solver-frontend.vercel.app/](https://tsp-solver-frontend.vercel.app/)
