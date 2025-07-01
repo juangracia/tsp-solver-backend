@@ -1,10 +1,6 @@
 # Compiled class files
 *.class
 
-# Log files
-*.log
-logs/
-
 # BlueJ files
 *.ctxt
 
@@ -84,4 +80,8 @@ application-prod.properties
 *.db
 
 # Logs
-app.log*
+*.log
+logs/
+
+.DS_Store
+.claude/settings.local.json

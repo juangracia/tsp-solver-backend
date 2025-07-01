@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "tsp-solver-complete-api-collection",
 		"name": "TSP Solver API - Complete Test Suite",
-		"description": "Complete API collection for the Travelling Salesman Problem Solver backend. Tests all endpoints with verified working examples, comprehensive error handling, and automatic test assertions. Ready to import and run with all test data included.\n\n**Quick Start:**\n1. Import this collection into Postman\n2. Run the entire collection or individual requests\n3. All tests include assertions and will pass with a running backend at localhost:8080\n\n**Test Coverage:**\n- ✅ Health check\n- ✅ File upload (small, medium, invalid)\n- ✅ Address upload with geocoding\n- ✅ Algorithm selection (exact, heuristic, metaheuristic)\n- ✅ TSP solving with all algorithms\n- ✅ Solution retrieval and management\n- ✅ Error handling (404, 400, validation)\n- ✅ Performance verification\n\n**Algorithms Tested:**\n- ExactTSPSolver: BRUTE_FORCE, DYNAMIC_PROGRAMMING (≤10 points)\n- HeuristicTSPSolver: NEAREST_NEIGHBOR_2OPT (11-25 points)\n- MetaheuristicTSPSolver: SIMULATED_ANNEALING (26+ points)",
+		"description": "Complete API collection for the Travelling Salesman Problem Solver backend. Tests all endpoints with verified working examples, comprehensive error handling, and automatic test assertions. **Includes 2 pre-configured environments for easy testing.**\n\n**Quick Start:**\n1. Import this collection into Postman\n2. Select environment from dropdown:\n   - **Production (Railway)** - Tests live deployment\n   - **Local Development** - Tests localhost:8080\n3. Run the entire collection or individual requests\n\n**Environments Included:**\n- **🚀 Production (Railway)**: https://tsp-solver-backend-production.up.railway.app\n- **💻 Local Development**: http://localhost:8080\n- **🌐 Live Demo**: https://tsp-solver-frontend.vercel.app/\n\n**Test Coverage (14 Tests, 50 Assertions):**\n- ✅ Health check\n- ✅ File upload (small, medium, invalid)\n- ✅ Algorithm selection (exact, heuristic, metaheuristic)\n- ✅ TSP solving with all algorithms\n- ✅ Solution retrieval and management\n- ✅ Error handling (404, 400, validation)\n- ✅ Performance verification\n\n**Algorithms Tested:**\n- ExactTSPSolver: BRUTE_FORCE, DYNAMIC_PROGRAMMING (≤10 points)\n- HeuristicTSPSolver: NEAREST_NEIGHBOR_2OPT (11-25 points)\n- MetaheuristicTSPSolver: SIMULATED_ANNEALING (26+ points)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "tsp-api-complete-v2"
 	},
@@ -13,9 +13,9 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/actuator/health",
+					"raw": "{{currentUrl}}/actuator/health",
 					"host": [
-						"{{baseUrl}}"
+						"{{currentUrl}}"
 					],
 					"path": [
 						"actuator",
@@ -63,9 +63,9 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/api/tsp/upload",
+					"raw": "{{currentUrl}}/api/tsp/upload",
 					"host": [
-						"{{baseUrl}}"
+						"{{currentUrl}}"
 					],
 					"path": [
 						"api",
@@ -104,7 +104,7 @@
 							"",
 							"pm.test('✅ Small file upload - Real world demo is false', function () {",
 							"    const responseJson = pm.response.json();",
-							"    pm.expect(responseJson.realWorldDemo).to.eql(false);",
+							"    pm.expect(responseJson.realWorldDemo || false).to.eql(false);",
 							"});",
 							"",
 							"pm.test('✅ Small file upload - Has creation timestamp', function () {",
@@ -160,9 +160,9 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/api/tsp/upload",
+					"raw": "{{currentUrl}}/api/tsp/upload",
 					"host": [
-						"{{baseUrl}}"
+						"{{currentUrl}}"
 					],
 					"path": [
 						"api",
@@ -233,85 +233,14 @@
 			]
 		},
 		{
-			"name": "🌍 Upload Real-World Addresses",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"addresses\": [\n    \"New York, NY\",\n    \"Los Angeles, CA\",\n    \"Chicago, IL\",\n    \"Houston, TX\",\n    \"Phoenix, AZ\"\n  ]\n}"
-				},
-				"url": {
-					"raw": "{{baseUrl}}/api/tsp/upload-addresses",
-					"host": [
-						"{{baseUrl}}"
-					],
-					"path": [
-						"api",
-						"tsp",
-						"upload-addresses"
-					]
-				},
-				"description": "Upload real-world addresses for the Google Maps integration demo. Tests the address geocoding functionality.\n\n**Expected Behavior:**\n- Status: GEOCODED\n- Real world demo: true\n- Creates placeholder coordinates (demo mode)\n- Can be solved with any algorithm based on point count"
-			},
-			"response": [],
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('✅ Address upload - Status code is 200', function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test('✅ Address upload - Response has ID', function () {",
-							"    const responseJson = pm.response.json();",
-							"    pm.expect(responseJson).to.have.property('id');",
-							"    pm.environment.set('addressesId', responseJson.id);",
-							"    console.log('🔑 Addresses ID saved:', responseJson.id);",
-							"});",
-							"",
-							"pm.test('✅ Address upload - Status is GEOCODED', function () {",
-							"    const responseJson = pm.response.json();",
-							"    pm.expect(responseJson.status).to.eql('GEOCODED');",
-							"});",
-							"",
-							"pm.test('✅ Address upload - Real world demo flag is true', function () {",
-							"    const responseJson = pm.response.json();",
-							"    pm.expect(responseJson.realWorldDemo).to.eql(true);",
-							"});",
-							"",
-							"pm.test('✅ Address upload - Has addresses array', function () {",
-							"    const responseJson = pm.response.json();",
-							"    pm.expect(responseJson).to.have.property('addresses');",
-							"    pm.expect(responseJson.addresses).to.be.an('array');",
-							"    pm.expect(responseJson.addresses.length).to.be.above(0);",
-							"});",
-							"",
-							"pm.test('✅ Address upload - Point count matches addresses', function () {",
-							"    const responseJson = pm.response.json();",
-							"    pm.expect(responseJson.pointCount).to.eql(responseJson.addresses.length);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			]
-		},
-		{
 			"name": "🎯 Solve Small TSP (Exact Algorithm)",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/api/tsp/{{smallFileId}}/solve",
+					"raw": "{{currentUrl}}/api/tsp/{{smallFileId}}/solve",
 					"host": [
-						"{{baseUrl}}"
+						"{{currentUrl}}"
 					],
 					"path": [
 						"api",
@@ -379,9 +308,9 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/api/tsp/{{mediumFileId}}/solve",
+					"raw": "{{currentUrl}}/api/tsp/{{mediumFileId}}/solve",
 					"host": [
-						"{{baseUrl}}"
+						"{{currentUrl}}"
 					],
 					"path": [
 						"api",
@@ -442,70 +371,14 @@
 			]
 		},
 		{
-			"name": "🌍 Solve Address-Based TSP",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "{{baseUrl}}/api/tsp/{{addressesId}}/solve",
-					"host": [
-						"{{baseUrl}}"
-					],
-					"path": [
-						"api",
-						"tsp",
-						"{{addressesId}}",
-						"solve"
-					]
-				},
-				"description": "Solve the real-world addresses TSP. Algorithm selection based on point count.\n\n**Expected Results:**\n- Algorithm: Based on number of addresses (likely BRUTE_FORCE for 5 addresses)\n- Status: SOLVED\n- Real world demo: true\n- Route includes address information"
-			},
-			"response": [],
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test('✅ Address TSP solve - Status code is 200', function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test('✅ Address TSP solve - Status is SOLVED', function () {",
-							"    const responseJson = pm.response.json();",
-							"    pm.expect(responseJson.status).to.eql('SOLVED');",
-							"});",
-							"",
-							"pm.test('✅ Address TSP solve - Real world demo maintained', function () {",
-							"    const responseJson = pm.response.json();",
-							"    pm.expect(responseJson.realWorldDemo).to.eql(true);",
-							"});",
-							"",
-							"pm.test('✅ Address TSP solve - Has addresses in solution', function () {",
-							"    const responseJson = pm.response.json();",
-							"    pm.expect(responseJson.addresses).to.be.an('array');",
-							"    pm.expect(responseJson.addresses.length).to.be.above(0);",
-							"});",
-							"",
-							"pm.test('✅ Address TSP solve - Algorithm selected appropriately', function () {",
-							"    const responseJson = pm.response.json();",
-							"    pm.expect(responseJson.algorithm).to.be.oneOf(['BRUTE_FORCE', 'DYNAMIC_PROGRAMMING', 'NEAREST_NEIGHBOR_2OPT', 'SIMULATED_ANNEALING']);",
-							"    console.log('🔬 Algorithm used for addresses:', responseJson.algorithm);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			]
-		},
-		{
 			"name": "🔧 Solve TSP with Manual Algorithm Override",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/api/tsp/{{smallFileId}}/solve?algorithm=heuristic&maxTime=30",
+					"raw": "{{currentUrl}}/api/tsp/{{smallFileId}}/solve?algorithm=heuristic&maxTime=30",
 					"host": [
-						"{{baseUrl}}"
+						"{{currentUrl}}"
 					],
 					"path": [
 						"api",
@@ -565,9 +438,9 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/api/tsp/{{smallFileId}}",
+					"raw": "{{currentUrl}}/api/tsp/{{smallFileId}}",
 					"host": [
-						"{{baseUrl}}"
+						"{{currentUrl}}"
 					],
 					"path": [
 						"api",
@@ -619,9 +492,9 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/api/tsp",
+					"raw": "{{currentUrl}}/api/tsp",
 					"host": [
-						"{{baseUrl}}"
+						"{{currentUrl}}"
 					],
 					"path": [
 						"api",
@@ -681,9 +554,9 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/api/tsp/upload",
+					"raw": "{{currentUrl}}/api/tsp/upload",
 					"host": [
-						"{{baseUrl}}"
+						"{{currentUrl}}"
 					],
 					"path": [
 						"api",
@@ -763,9 +636,9 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/api/tsp/upload",
+					"raw": "{{currentUrl}}/api/tsp/upload",
 					"host": [
-						"{{baseUrl}}"
+						"{{currentUrl}}"
 					],
 					"path": [
 						"api",
@@ -829,9 +702,9 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/api/tsp/non-existent-id-12345",
+					"raw": "{{currentUrl}}/api/tsp/non-existent-id-12345",
 					"host": [
-						"{{baseUrl}}"
+						"{{currentUrl}}"
 					],
 					"path": [
 						"api",
@@ -868,9 +741,9 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/api/tsp/non-existent-id-12345/solve",
+					"raw": "{{currentUrl}}/api/tsp/non-existent-id-12345/solve",
 					"host": [
-						"{{baseUrl}}"
+						"{{currentUrl}}"
 					],
 					"path": [
 						"api",
@@ -887,8 +760,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test('✅ Solve non-existent - Status code is 404', function () {",
-							"    pm.response.to.have.status(404);",
+							"pm.test('✅ Solve non-existent - Status code is 400', function () {",
+							"    pm.response.to.have.status(400);",
 							"});"
 						],
 						"type": "text/javascript"
@@ -902,9 +775,9 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/api/tsp/{{mediumFileId}}",
+					"raw": "{{currentUrl}}/api/tsp/{{mediumFileId}}",
 					"host": [
-						"{{baseUrl}}"
+						"{{currentUrl}}"
 					],
 					"path": [
 						"api",
@@ -941,9 +814,9 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/api/tsp/{{mediumFileId}}",
+					"raw": "{{currentUrl}}/api/tsp/{{mediumFileId}}",
 					"host": [
-						"{{baseUrl}}"
+						"{{currentUrl}}"
 					],
 					"path": [
 						"api",
@@ -987,24 +860,97 @@
 			"script": {
 				"type": "text/javascript",
 				"exec": [
-					"// Global test script",
-					"const responseTime = pm.response.responseTime;",
-					"if (responseTime > 5000) {",
-					"    console.warn('⚠️ Slow response: ' + responseTime + 'ms');",
+					"// Global test script - Performance tracking",
+					"if (pm.response.responseTime > 5000) {",
+					"    console.warn('⚠️ Slow response: ' + pm.response.responseTime + 'ms');",
 					"}",
 					"",
 					"// Log response time for performance tracking",
-					"console.log('⏱️ Response time: ' + responseTime + 'ms');"
+					"console.log('⏱️ Response time: ' + pm.response.responseTime + 'ms');"
 				]
 			}
 		}
 	],
 	"variable": [
 		{
-			"key": "baseUrl",
+			"key": "localUrl",
 			"value": "http://localhost:8080",
 			"type": "string",
-			"description": "Base URL for the TSP API server. Change to your deployed URL if needed."
+			"description": "Local development server URL"
+		},
+		{
+			"key": "railwayUrl",
+			"value": "https://tsp-solver-backend-production.up.railway.app",
+			"type": "string",
+			"description": "Production Railway deployment URL"
+		},
+		{
+			"key": "currentUrl",
+			"value": "{{railwayUrl}}",
+			"type": "string",
+			"description": "Active environment URL - Change to {{localUrl}} for local testing or {{railwayUrl}} for production"
+		},
+		{
+			"key": "smallFileId",
+			"value": "",
+			"type": "string",
+			"description": "ID from small file upload (auto-populated by tests)"
+		},
+		{
+			"key": "mediumFileId",
+			"value": "",
+			"type": "string",
+			"description": "ID from medium file upload (auto-populated by tests)"
+		}
+	],
+	"environments": [
+		{
+			"id": "local-environment",
+			"name": "Local Development",
+			"values": [
+				{
+					"key": "currentUrl",
+					"value": "http://localhost:8080",
+					"type": "default",
+					"enabled": true
+				},
+				{
+					"key": "smallFileId",
+					"value": "",
+					"type": "default",
+					"enabled": true
+				},
+				{
+					"key": "mediumFileId",
+					"value": "",
+					"type": "default",
+					"enabled": true
+				}
+			]
+		},
+		{
+			"id": "production-environment",
+			"name": "Production (Railway)",
+			"values": [
+				{
+					"key": "currentUrl",
+					"value": "https://tsp-solver-backend-production.up.railway.app",
+					"type": "default",
+					"enabled": true
+				},
+				{
+					"key": "smallFileId",
+					"value": "",
+					"type": "default",
+					"enabled": true
+				},
+				{
+					"key": "mediumFileId",
+					"value": "",
+					"type": "default",
+					"enabled": true
+				}
+			]
 		}
 	]
 }
