@@ -9,6 +9,7 @@
 - **🌐 Live Demo**: [https://tsp-solver-frontend.vercel.app/](https://tsp-solver-frontend.vercel.app/)
 - **📚 API Docs**: [https://tsp-solver-backend-production.up.railway.app/swagger-ui.html](https://tsp-solver-backend-production.up.railway.app/swagger-ui.html)
 - **📥 Postman Collection**: [Download TSP_API_Complete.postman_collection.json](./TSP_API_Complete.postman_collection.json)
+- **🔧 Postman Environment**: [Download TSP_API_Environments.postman_environment.json](./TSP_API_Environments.postman_environment.json)
 - **🔗 Backend API**: [https://tsp-solver-backend-production.up.railway.app](https://tsp-solver-backend-production.up.railway.app)
 
 ## Problem Statement
